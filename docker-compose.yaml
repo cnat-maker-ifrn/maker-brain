@@ -1,0 +1,41 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .env.docker
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+
+  maker-auth:
+    build: ./maker-auth
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./maker-auth/.env
+      - ./maker-auth/.env.docker
+    depends_on:
+      - rabbitmq
+
+  maker-app:
+    build: ./maker-app
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./maker-app/.env
+      - ./maker-app/.env.docker
+    depends_on:
+      - rabbitmq
+
+  maker-app-consumer:
+    build: ./maker-app
+    command: python scheduling/consumers/auth_consumer.py
+    env_file:
+      - ./maker-app/.env
+      - ./maker-app/.env.docker
+    depends_on:
+      - rabbitmq
+      - maker-auth
