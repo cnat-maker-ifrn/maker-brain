@@ -5,10 +5,15 @@ services:
       - "5672:5672"
       - "15672:15672"
     env_file:
-      - .env.docker
+      - .env
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   maker-auth:
     build: ./maker-auth
@@ -16,7 +21,6 @@ services:
       - "8000:8000"
     env_file:
       - ./maker-auth/.env
-      - ./maker-auth/.env.docker
     depends_on:
       - rabbitmq
 
@@ -26,16 +30,16 @@ services:
       - "8001:8001"
     env_file:
       - ./maker-app/.env
-      - ./maker-app/.env.docker
     depends_on:
       - rabbitmq
 
   maker-app-consumer:
     build: ./maker-app
-    command: python scheduling/consumers/auth_consumer.py
+    command: python -m app.consumers.auth_consumer
     env_file:
       - ./maker-app/.env
-      - ./maker-app/.env.docker
     depends_on:
-      - rabbitmq
-      - maker-auth
+      rabbitmq:
+        condition: service_healthy
+      maker-auth:
+        condition: service_started
