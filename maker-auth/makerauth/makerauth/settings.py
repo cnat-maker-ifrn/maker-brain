@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast=bool)
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -54,8 +55,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=config("JWT_ACCESS_TOKEN_LIFETIME", cast=int)),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=config("JWT_REFRESH_TOKEN_LIFETIME", cast=int)),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.environ["JWT_ACCESS_TOKEN_LIFETIME"])),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.environ["JWT_REFRESH_TOKEN_LIFETIME"])),
     'ALORITHM': "HS256",
     'SIGNING_KEY': config("JWT_SECRET_KEY"),
     'AUTH_HEADER_TYPES': ("Bearer",),
