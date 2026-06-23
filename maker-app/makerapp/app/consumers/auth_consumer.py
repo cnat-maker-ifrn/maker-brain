@@ -7,31 +7,35 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "makerapp.settings")
 django.setup()
 
 from app.models import User
+from django.contrib.auth.models import Group
 
 def handle_user_created(payload: dict):
     User.objects.get_or_create(
-        id=payload["id"],
+        auth_id=payload["id"],
         defaults={
             "cpf": payload["cpf"],
             "email": payload["email"],
             "name": payload["name"],
+            "cellphone": payload["cellphone"],
             "bond": payload["bond"],
+            "enrollment": payload["enrollment"],
             "groups": payload["groups"],
             "is_active": payload["is_active"],
         }
     )
 
 def handle_user_updated(payload: dict):
-    User.objects.filter(id=payload["id"]).update(
+    User.objects.filter(auth_id=payload["id"]).update(
         email=payload["email"],
         name=payload["name"],
         bond=payload["bond"],
+        enrollment=payload.get("enrollment"),
         groups=payload["groups"],
         is_active=payload["is_active"],
     )
 
 def handle_user_deleted(payload: dict):
-    User.objects.filter(id=payload["id"]).delete()
+    User.objects.filter(auth_id=payload["id"]).delete()
 
 HANDLERS = {
     "user.created": handle_user_created,

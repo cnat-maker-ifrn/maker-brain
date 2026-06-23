@@ -22,7 +22,8 @@ services:
     env_file:
       - ./maker-auth/.env
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   maker-app:
     build: ./maker-app
@@ -30,16 +31,30 @@ services:
       - "8001:8001"
     env_file:
       - ./maker-app/.env
-    depends_on:
-      - rabbitmq
-
-  maker-app-consumer:
-    build: ./maker-app
-    command: python -m app.consumers.auth_consumer
-    env_file:
-      - ./maker-app/.env
+    volumes:
+      - maker-app-db:/app/makerapp/data
     depends_on:
       rabbitmq:
         condition: service_healthy
-      maker-auth:
-        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  maker-app-consumer:
+    build: ./maker-app
+    command: sh -c "mkdir -p /app/data && python manage.py migrate && python -m app.consumers.auth_consumer"
+    env_file:
+      - ./maker-app/.env
+    volumes:
+      - maker-app-db:/app/makerapp/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      maker-app:
+        condition: service_healthy
+
+volumes:
+  maker-app-db:
