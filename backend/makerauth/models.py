@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
-from authentication.validators import validate_cpf
+from makerauth.validators import validate_cpf
 
 
 class UserManager(BaseUserManager):
