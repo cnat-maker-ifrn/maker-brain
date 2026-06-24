@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
-from authentication.models import User
+from makerauth.models import User
 from .serializers.requester_serializers import (
         RequesterRegisterSerializer, 
         RequesterUpdateSerializer, 
@@ -18,7 +18,7 @@ from .serializers.scholarship_student_serializers import (
         ScholarshipStudentListSerializer
     )
 from .services import UserService
-from authentication.permissions import IsOwnerOrManager, IsSelfUpdate
+from makerauth.permissions import IsOwnerOrManager, IsSelfUpdate
 
 class RequesterViewSet(ModelViewSet):
     queryset = User.objects.filter(groups__name="Requesters", is_active=True)
