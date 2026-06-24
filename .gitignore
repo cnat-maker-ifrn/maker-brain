@@ -1,3 +1,5 @@
+# - Backend -
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -216,3 +218,65 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# - Frontend -
+
+# Dependencies
+node_modules/
+ 
+# Vite build output
+dist/
+dist-ssr/
+ 
+# Vite cache
+.vite/
+vite.config.*.timestamp-*
+ 
+# Rollup cache (used internally by Vite)
+.rollup.cache/
+ 
+# TypeScript build info
+*.tsbuildinfo
+ 
+# Local environment variables (may contain secrets)
+.env.local
+.env.*.local
+ 
+# Tailwind CSS — generated output file (if using a standalone CLI build step)
+tailwind-output.css
+ 
+# PostCSS cache
+.postcss-cache/
+ 
+# Testing
+coverage/
+/cypress/videos/
+/cypress/screenshots/
+/cypress/downloads/
+playwright-report/
+test-results/
+ 
+# Storybook build output
+storybook-static/
+ 
+# eslint cache
+.eslintcache
+ 
+# stylelint cache
+.stylelintcache
+ 
+# Package manager lockfiles — keep only the one your project uses
+# (uncomment the lines for lockfiles you want to ignore)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+ 
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+ 
+# pnpm
+.pnpm-store/
