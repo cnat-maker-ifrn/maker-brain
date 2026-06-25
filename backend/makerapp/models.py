@@ -1,5 +1,5 @@
 from django.db import models
-from makerauth.models import User
+from django.conf import settings
 
 
 class School(models.Model):
@@ -69,7 +69,7 @@ class Visit(models.Model):
     observations = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     acceptance_status = models.CharField(max_length=8, choices=ACCEPTANCE_STATUS_CHOICES, default='pending')
-    requester = models.ForeignKey('User', on_delete=models.PROTECT, related_name='visits', null=True, blank=True)
+    requester = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='visits', null=True, blank=True)
     requester_origin = models.CharField(max_length=8, choices=REQUESTER_ORIGIN_CHOICES)
     cnat_department = models.CharField(max_length=7, choices=DEPARTMENT_CHOICES, null=True, blank=True)
     school = models.ForeignKey('School', on_delete=models.PROTECT, related_name='visits', null=True, blank=True)
