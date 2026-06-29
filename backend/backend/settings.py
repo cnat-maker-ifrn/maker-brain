@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'makerauth',
+    'makerapp',
     'drf_yasg',
 ]
 
