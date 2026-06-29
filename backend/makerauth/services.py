@@ -30,3 +30,11 @@ class UserService:
         user.groups.add(group)
 
         return user
+    
+    @staticmethod
+    def add_user_in_managers_group(user):
+        group = Group.objects.get(name="Managers")
+        user.groups.add(group)
+        user.save
+
+        return user
