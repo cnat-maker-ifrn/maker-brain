@@ -44,6 +44,9 @@ class VisitViewSet(ModelViewSet):
     def get_queryset(self):
         user = self.request.user
 
+        if not user or not user.is_authenticated:
+            return Visit.objects.none()
+
         if self.action in ['accept', 'reject']:
             return Visit.objects.filter(acceptance_status='pending')
 
