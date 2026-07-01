@@ -15,6 +15,7 @@ class RequesterRegisterSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'password'
         ]
 
@@ -46,6 +47,7 @@ class RequesterUpdateSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'password'
         ]
 
@@ -75,6 +77,7 @@ class RequesterDetailSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'groups'
         ]
 
@@ -90,6 +93,7 @@ class RequesterListSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'groups'
         ]
 
