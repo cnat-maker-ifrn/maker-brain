@@ -22,7 +22,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="MakerAuth API", 
+        title="MakerBrain API", 
         default_version="v1", 
         description="API de autenticação do laboratório CNAT Maker", 
         contact=openapi.Contact(email="maker.cnat@gmail.com"),
