@@ -55,6 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     bond = models.CharField(max_length=20, choices=BOND_CHOICES)
     enrollment = models.CharField(unique=True, max_length=20, null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    accepts_marketing_contact = models.BooleanField(default=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
