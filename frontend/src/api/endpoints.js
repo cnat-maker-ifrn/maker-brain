@@ -6,4 +6,7 @@ export const endpoints = {
   requesters: {
     register: '/makerauth/requesters/',
   },
+  scholarshipStudents: {
+    register: '/makerauth/scholarship-students/',
+  },
 };
