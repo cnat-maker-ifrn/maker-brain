@@ -4,13 +4,13 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { maskCPF, maskCellphone, unmask } from '@/lib/masks';
 import { validateRegisterForm, enrollmentIsRequired } from '@/lib/validators';
-import { useRegister } from '../hooks/useRegister';
+import { useRegisterRequester } from '../hooks/useRegisterRequester';
 
 const BOND_OPTIONS = [
-  { value: 'student', label: 'Estudante (do IFRN CNAT)' },
-  { value: 'teacher', label: 'Professor (do IFRN CNAT)' },
+  { value: 'student', label: 'Estudante (Do IFRN CNAT)' },
+  { value: 'teacher', label: 'Professor (Do IFRN CNAT)' },
   { value: 'public_servant', label: 'Servidor' },
-  { value: 'external', label: 'Externo (Todos que não tenham vínculo com o IFRN CNAT)' },
+  { value: 'external', label: 'Externo (Todos que não forem do IFRN CNAT)' },
 ];
 
 const INITIAL_VALUES = {
@@ -25,10 +25,10 @@ const INITIAL_VALUES = {
   passwordConfirmation: '',
 };
 
-export function RegisterForm({ onRegistered }) {
+export function RequesterRegisterForm({ onRegistered }) {
   const [values, setValues] = useState(INITIAL_VALUES);
   const [fieldErrors, setFieldErrors] = useState({});
-  const { register, isSubmitting, serverErrors, isSuccess } = useRegister();
+  const { register, isSubmitting, serverErrors, isSuccess } = useRegisterRequester();
 
   const errors = { ...fieldErrors, ...serverErrors };
   const showEnrollment = enrollmentIsRequired(values.bond);
@@ -91,7 +91,7 @@ export function RegisterForm({ onRegistered }) {
           <Input
             id="name"
             label="Nome completo"
-            placeholder="Seu Nome Completo"
+            placeholder="Ana Beatriz Souza"
             value={values.name}
             onChange={setField('name')}
             error={errors.name}
@@ -112,7 +112,7 @@ export function RegisterForm({ onRegistered }) {
             id="email"
             type="email"
             label="E-mail"
-            placeholder="email@exemplo.com"
+            placeholder="voce@exemplo.com"
             value={values.email}
             onChange={setField('email')}
             error={errors.email}
