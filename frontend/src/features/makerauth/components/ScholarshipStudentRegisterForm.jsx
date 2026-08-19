@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { maskCPF, maskCellphone, unmask } from '@/lib/masks';
-import { isValidCPF, isValidEmail } from '@/lib/validators';
+import { maskCPF, maskCellphone, unmask } from '@/frontLib/masks';
+import { isValidCPF, isValidEmail } from '@/frontLib/validators';
 import { useRegisterScholarshipStudent } from '../hooks/useRegisterScholarshipStudent';
 
 const INITIAL_VALUES = {

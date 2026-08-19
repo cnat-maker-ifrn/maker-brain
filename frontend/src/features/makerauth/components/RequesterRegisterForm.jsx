@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
-import { maskCPF, maskCellphone, unmask } from '@/lib/masks';
-import { validateRegisterForm, enrollmentIsRequired } from '@/lib/validators';
+import { maskCPF, maskCellphone, unmask } from '@/frontLib/masks';
+import { validateRegisterForm, enrollmentIsRequired } from '@/frontLib/validators';
 import { useRegisterRequester } from '../hooks/useRegisterRequester';
 
 const BOND_OPTIONS = [
