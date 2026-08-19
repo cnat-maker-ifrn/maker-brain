@@ -7,6 +7,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/register" element={<RegisterRequesterPage />} />
       <Route path="/register/bolsista" element={<RegisterScholarshipStudentPage />} />
+      <Route path="/login" element={<LoginPage />} />
     </Routes>
   );
 }
