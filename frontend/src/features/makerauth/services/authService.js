@@ -23,4 +23,9 @@ export const authService = {
     apiClient.post(endpoints.scholarshipStudents.register, toFormData(data), {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  
+  login: async ({email, password}) => {
+    const { data } = await apiClient.post(endpoints.auth.login, {email, password});
+    return data; // {access, refresh}
+  }
 };
