@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { authService } from '../services/authService';
-import { extractServerErrors } from '@/lib/apiErrors';
+import { extractServerErrors } from '@/frontLib/apiErrors';
 
 export function useRegisterScholarshipStudent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
