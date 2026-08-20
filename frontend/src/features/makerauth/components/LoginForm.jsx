@@ -5,12 +5,14 @@ import { useLogin } from '../hooks/useLogin';
 export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { submitLogin, isLoading, error } = useLogin();
+  const { submitLogin, isLoading, errors } = useLogin();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     submitLogin({ email, password });
   };
+
+  const generalError = errors?.non_field_errors || errors?.detail;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
@@ -31,6 +33,7 @@ export function LoginForm() {
                      transition-colors"
           placeholder="voce@ifrn.edu.br"
         />
+        {errors?.email && <p className="text-xs text-red-400">{errors.email}</p>}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -55,11 +58,12 @@ export function LoginForm() {
                      transition-colors"
           placeholder="••••••••"
         />
+        {errors?.password && <p className="text-xs text-red-400">{errors.password}</p>}
       </div>
 
-      {error && (
+      {generalError && (
         <p role="alert" className="text-sm text-red-400 border border-red-900/60 bg-red-950/30 rounded-md px-3 py-2">
-          {error}
+          {generalError}
         </p>
       )}
 
