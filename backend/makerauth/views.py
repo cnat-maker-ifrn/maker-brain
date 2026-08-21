@@ -88,7 +88,6 @@ class ScholarshipStudentViewSet(ModelViewSet):
         
         return Response(status=200)
     
-
     @swagger_auto_schema(request_body=no_body)
     @action(detail=True, methods=['delete'])
     def reject(self, request, pk=None):
@@ -96,6 +95,19 @@ class ScholarshipStudentViewSet(ModelViewSet):
         UserService.delete_user_without_group(user)
         
         return Response(status=204)
+    
+    @action(detail=False, methods=['get'])
+    def pending(self, request):
+        queryset = User.objects.filter(is_active=False, groups__isnull=True) | User.objects.filter(
+            is_active=False, bond='student'
+        )
+
+        queryset = User.objects.filter(is_active=False).exclude(
+            groups__name__in=["Owners", "Managers", "Requesters", "Scholarship Students"]
+        ).distinct()
+
+        serializer = ScholarshipStudentListSerializer(queryset, many=True)
+        return Response(serializer.data)
     
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
