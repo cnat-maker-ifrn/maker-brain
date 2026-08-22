@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { scholarshipStudentService } from '../services/scholarshipStudentService';
-import { parseApiError } from '@/frontLib/apiErrors';
+import { extractServerErrors } from '@/frontLib/apiErrors';
 
 export function usePendingScholarshipStudents() {
   const [students, setStudents] = useState([]);
@@ -14,7 +14,7 @@ export function usePendingScholarshipStudents() {
       const { data } = await scholarshipStudentService.listPending();
       setStudents(data);
     } catch (err) {
-      setError(parseApiError(err));
+      setError(extractServerErrors(err));
     } finally {
       setIsLoading(false);
     }

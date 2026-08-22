@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { scholarshipStudentService } from '../services/scholarshipStudentService';
-import { parseApiError } from '@/frontLib/apiErrors';
+import { extractServerErrors } from '@/frontLib/apiErrors';
 
 export function useScholarshipStudentActions(onActionComplete) {
   const [processingId, setProcessingId] = useState(null);
@@ -13,7 +13,7 @@ export function useScholarshipStudentActions(onActionComplete) {
       await scholarshipStudentService.accept(id);
       onActionComplete?.();
     } catch (err) {
-      setError(parseApiError(err));
+      setError(extractServerErrors(err));
     } finally {
       setProcessingId(null);
     }
@@ -26,7 +26,7 @@ export function useScholarshipStudentActions(onActionComplete) {
       await scholarshipStudentService.reject(id);
       onActionComplete?.();
     } catch (err) {
-      setError(parseApiError(err));
+      setError(extractServerErrors(err));
     } finally {
       setProcessingId(null);
     }
