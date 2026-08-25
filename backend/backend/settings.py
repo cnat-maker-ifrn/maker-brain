@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'makerapp',
     'rest_framework',
     'drf_yasg',
+    'corsheaders'
 ]
 
 REST_FRAMEWORK = {
@@ -62,8 +63,11 @@ SIMPLE_JWT = {
     'TOKEN_OBATIN_SERIALIZER': "authentication.serializers.token_serializers.CustomTokenObtainPairSerializer",
 }
 
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(",")
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

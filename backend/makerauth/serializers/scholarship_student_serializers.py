@@ -14,6 +14,7 @@ class ScholarshipStudentRegisterSerializer(serializers.ModelSerializer):
             'cellphone',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'password'
         ]
     
@@ -37,6 +38,7 @@ class ScholarshipStudentUpdateSerializer(serializers.ModelSerializer):
             'name',
             'cellphone',
             'profile_picture',
+            'accepts_marketing_contact',
             'password'
         ]
     
@@ -67,6 +69,7 @@ class ScholarshipStudentDetailSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'groups'
         ]
 
@@ -75,6 +78,7 @@ class ScholarshipStudentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'id',
             'cpf',
             'email',
             'name',
@@ -82,5 +86,6 @@ class ScholarshipStudentListSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'profile_picture',
+            'accepts_marketing_contact',
             'groups'
         ]
