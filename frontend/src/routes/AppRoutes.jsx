@@ -1,7 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import { RegisterRequesterPage } from '@/pages/RegisterRequesterPage';
 import { RegisterScholarshipStudentPage } from '@/pages/RegisterScholarshipStudentPage';
-import { LoginPage } from '@/pages/LoginPage'
+import { LoginPage } from '@/pages/LoginPage';
+import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
+import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
 export function AppRoutes() {
   return (
@@ -9,7 +11,9 @@ export function AppRoutes() {
       <Route path="/register" element={<RegisterRequesterPage />} />
       <Route path="/register/bolsista" element={<RegisterScholarshipStudentPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/scholarship-students/pending" element={<ProtectedRoute allowedGroups={['Owners', 'Managers']}><ScholarshipStudentsApprovalPage /></ProtectedRoute>}/>
+      <Route element={<ProtectedRoute allowedGroups={['Owners', 'Managers']} />}>
+        <Route path="/scholarship-students/pending" element={<ScholarshipStudentsApprovalPage />} />
+      </Route>
     </Routes>
   );
 }
