@@ -19,6 +19,9 @@ from .serializers.scholarship_student_serializers import (
     )
 from .services import UserService
 from makerauth.permissions import IsOwnerOrManager, IsSelfUpdate
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers.token_serializers import CustomTokenObtainPairSerializer
+
 
 class RequesterViewSet(ModelViewSet):
     queryset = User.objects.filter(groups__name="Requesters", is_active=True)
@@ -124,3 +127,6 @@ class ScholarshipStudentViewSet(ModelViewSet):
             return [IsSelfUpdate()]
 
         return [IsOwnerOrManager()]
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
