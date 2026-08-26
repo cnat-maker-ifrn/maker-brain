@@ -60,7 +60,7 @@ SIMPLE_JWT = {
     'ALORITHM': "HS256",
     'SIGNING_KEY': config("JWT_SECRET_KEY"),
     'AUTH_HEADER_TYPES': ("Bearer",),
-    'TOKEN_OBATIN_SERIALIZER': "authentication.serializers.token_serializers.CustomTokenObtainPairSerializer",
+    'TOKEN_OBTAIN_SERIALIZER': "makerauth.serializers.token_serializers.CustomTokenObtainPairSerializer",
 }
 
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS').split(",")

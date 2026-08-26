@@ -1,14 +1,18 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 
-export function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
+export function ProtectedRoute({ allowedGroups }) {
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
-    return null; // ou um spinner, se preferir
+    return null;
   }
 
   if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedGroups && !allowedGroups.some((group) => user.groups.includes(group))) {
     return <Navigate to="/login" replace />;
   }
 
