@@ -12,15 +12,15 @@ export default function ScholarshipStudentsApprovalPage() {
 
   return (
     <PageContainer>
-      <h1 className="text-2xl font-semibold text-amber-400 mb-6">
+      <h1 className="text-2xl font-semibold text-forest-600 mb-6">
         Solicitações de Cadastro — Bolsistas
       </h1>
 
       {isLoading && <Spinner />}
-      {error && <p className="text-red-400">{error}</p>}
+      {error && <p className="text-danger-600">{error}</p>}
 
       {!isLoading && students.length === 0 && (
-        <p className="text-graphite-400">Nenhuma solicitação pendente.</p>
+        <p className="text-gray-500">Nenhuma solicitação pendente.</p>
       )}
 
       <div className="flex flex-col gap-3">
