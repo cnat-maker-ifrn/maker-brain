@@ -74,12 +74,12 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
 
   if (isSuccess) {
     return (
-      <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-6 py-8 text-center">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-amber-400">
+      <div className="rounded-lg border border-forest-200 bg-forest-50 px-6 py-8 text-center">
+        <p className="font-mono text-xs uppercase tracking-[0.3em] text-forest-600">
           Cadastro enviado
         </p>
-        <h2 className="mt-2 text-xl font-semibold text-stone-100">Aguardando aprovação</h2>
-        <p className="mt-2 text-sm text-stone-400">
+        <h2 className="mt-2 text-xl font-semibold text-gray-900">Aguardando aprovação</h2>
+        <p className="mt-2 text-sm text-gray-500">
           Sua conta foi criada e ficará inativa até que um responsável do laboratório aprove seu
           cadastro. Você receberá acesso assim que isso acontecer.
         </p>
@@ -90,13 +90,13 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
       {errors.non_field_errors ? (
-        <p className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">
+        <p className="rounded-md border border-danger-100 bg-danger-50 px-4 py-2.5 text-sm text-danger-600">
           {errors.non_field_errors}
         </p>
       ) : null}
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-amber-500/80">
+        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
           01 — Identificação
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -143,7 +143,7 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
       </fieldset>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-amber-500/80">
+        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
           02 — Vínculo com o MakerLab
         </legend>
         <Input
@@ -156,23 +156,23 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
           hint="A matrícula de estudante tem 14 caracteres."
         />
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="profile_picture" className="text-sm font-medium tracking-wide text-stone-300">
-            Foto de perfil <span className="text-stone-500">(opcional)</span>
+          <label htmlFor="profile_picture" className="text-sm font-medium text-gray-700">
+            Foto de perfil <span className="text-gray-400">(opcional)</span>
           </label>
           <input
             id="profile_picture"
             type="file"
             accept="image/*"
             onChange={setFile}
-            className="text-sm text-stone-400 file:mr-3 file:rounded-md file:border-0
-              file:bg-stone-800 file:px-3.5 file:py-2 file:text-sm file:font-medium
-              file:text-stone-200 hover:file:bg-stone-700"
+            className="text-sm text-gray-500 file:mr-3 file:rounded-md file:border-0
+              file:bg-forest-50 file:px-3.5 file:py-2 file:text-sm file:font-medium
+              file:text-forest-700 hover:file:bg-forest-100"
           />
         </div>
       </fieldset>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-amber-500/80">
+        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
           03 — Acesso
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">

@@ -12,7 +12,7 @@ export function RegisterScholarshipStudentPage() {
       footer={
         <>
           Vai apenas agendar uma visita?{' '}
-          <Link to="/register" className="font-medium text-amber-400 underline-offset-4 hover:underline">
+          <Link to="/register" className="font-medium text-forest-600 underline-offset-4 hover:underline">
             Cadastre-se como solicitante
           </Link>
           <br />
@@ -20,7 +20,7 @@ export function RegisterScholarshipStudentPage() {
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="font-medium text-amber-400 underline-offset-4 hover:underline"
+            className="font-medium text-forest-600 underline-offset-4 hover:underline"
           >
             Entrar
           </button>
