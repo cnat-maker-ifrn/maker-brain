@@ -9,7 +9,7 @@ export function PendingScholarshipStudentCard({ student, onAccept, onReject, isP
       </div>
       <div className="flex gap-2">
         <button
-          onClick={() => onAccept(student.cpf)}
+          onClick={() => onAccept(student.id)}
           disabled={isProcessing}
           className="px-3 py-1.5 rounded bg-amber-500 text-graphite-900 font-medium hover:bg-amber-400 disabled:opacity-50"
         >
