@@ -14,8 +14,8 @@ export function LogoutButton({ className = '' }) {
     <button
       type="button"
       onClick={handleLogout}
-      className={`rounded-md border border-stone-700 px-3 py-1.5 text-sm font-medium text-stone-300
-        transition-colors hover:border-amber-500/60 hover:text-amber-400 ${className}`}
+      className={`rounded-md border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600
+        transition-colors hover:border-forest-500/60 hover:text-forest-600 ${className}`}
     >
       Sair
     </button>

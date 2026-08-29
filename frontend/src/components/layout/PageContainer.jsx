@@ -2,12 +2,12 @@ import { LogoutButton } from '@/components/ui/LogoutButton';
 
 export function PageContainer({ children, className = '' }) {
   return (
-    <div className="relative min-h-screen bg-stone-950">
+    <div className="relative min-h-screen bg-white">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.07]"
         style={{
           backgroundImage:
-            'linear-gradient(to right, #E8A33D 1px, transparent 1px), linear-gradient(to bottom, #E8A33D 1px, transparent 1px)',
+            'linear-gradient(to right, #1f7a4d 1px, transparent 1px), linear-gradient(to bottom, #1f7a4d 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }}
       />
