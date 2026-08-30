@@ -3,7 +3,6 @@ import {
   useScholarshipStudentActions,
   PendingScholarshipStudentCard,
 } from '@/features/makerauth';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { Spinner } from '@/components/ui/Spinner';
 
 export default function ScholarshipStudentsApprovalPage() {
@@ -11,7 +10,7 @@ export default function ScholarshipStudentsApprovalPage() {
   const { accept, reject, processingId } = useScholarshipStudentActions(refetch);
 
   return (
-    <PageContainer>
+    <>
       <h1 className="text-2xl font-semibold text-forest-600 mb-6">
         Solicitações de Cadastro — Bolsistas
       </h1>
@@ -34,6 +33,6 @@ export default function ScholarshipStudentsApprovalPage() {
           />
         ))}
       </div>
-    </PageContainer>
+    </>
   );
 }

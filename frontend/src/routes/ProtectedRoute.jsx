@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export function ProtectedRoute({ allowedGroups }) {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -16,5 +17,9 @@ export function ProtectedRoute({ allowedGroups }) {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  );
 }
