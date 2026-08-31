@@ -15,7 +15,7 @@ from makerapp.serializers import (
     VisitCloseSerializer,
 )
 from makerapp.services import VisitService
-from makerauth.permissions import IsOwnerOrManager
+from makerauth.permissions import IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS
 
 
 class SchoolViewSet(ModelViewSet):
@@ -47,13 +47,16 @@ class VisitViewSet(ModelViewSet):
         if not user or not user.is_authenticated:
             return Visit.objects.none()
 
+        if self.action == 'mine':
+            return Visit.objects.filter(requester=user)
+
         if self.action in ['accept', 'reject']:
             return Visit.objects.filter(acceptance_status='pending')
 
         if self.action == 'close':
             return Visit.objects.filter(acceptance_status='accepted', is_visit_closed=False)
 
-        if user.groups.filter(name__in=['Owners', 'Managers']).exists():
+        if user.groups.filter(name__in=VISIT_MANAGER_GROUPS).exists():
             return Visit.objects.all()
 
         return Visit.objects.filter(requester=user)
@@ -71,16 +74,24 @@ class VisitViewSet(ModelViewSet):
         return VisitSerializer
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action in ['create', 'mine']:
             return [IsAuthenticated()]
+
+        if self.action == 'list':
+            return [IsVisitManager()]
 
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthenticated()]
 
         if self.action in ['accept', 'reject', 'close']:
-            return [IsOwnerOrManager()]
+            return [IsVisitManager()]
 
         return [IsAuthenticated()]
+
+    @action(detail=False, methods=['get'])
+    def mine(self, request):
+        serializer = VisitSerializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
