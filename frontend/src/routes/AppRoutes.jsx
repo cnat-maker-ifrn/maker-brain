@@ -2,8 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterRequesterPage } from '@/pages/RegisterRequesterPage';
 import { RegisterScholarshipStudentPage } from '@/pages/RegisterScholarshipStudentPage';
 import { LoginPage } from '@/pages/LoginPage';
+import DashboardPage from '@/pages/DashboardPage';
+import VisitManagementPage from '@/pages/VisitManagementPage';
 import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
+
+const VISIT_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
 
 export function AppRoutes() {
   return (
@@ -11,6 +15,15 @@ export function AppRoutes() {
       <Route path="/register" element={<RegisterRequesterPage />} />
       <Route path="/register/bolsista" element={<RegisterScholarshipStudentPage />} />
       <Route path="/login" element={<LoginPage />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<DashboardPage />} />
+      </Route>
+
+      <Route element={<ProtectedRoute allowedGroups={VISIT_MANAGER_GROUPS} />}>
+        <Route path="/visits" element={<VisitManagementPage />} />
+      </Route>
+
       <Route element={<ProtectedRoute allowedGroups={['Owners', 'Managers']} />}>
         <Route path="/scholarship-students/pending" element={<ScholarshipStudentsApprovalPage />} />
       </Route>

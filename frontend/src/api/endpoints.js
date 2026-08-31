@@ -12,4 +12,10 @@ export const endpoints = {
     accept: (id) => `/makerauth/scholarship-students/${id}/accept/`,
     reject: (id) => `/makerauth/scholarship-students/${id}/reject/`
   },
+  visits: {
+    mine: '/makerapp/visits/mine/',
+    list: '/makerapp/visits/',
+    accept: (id) => `/makerapp/visits/${id}/accept/`,
+    reject: (id) => `/makerapp/visits/${id}/reject/`,
+  },
 };
