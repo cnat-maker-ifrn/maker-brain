@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from drf_yasg.utils import swagger_auto_schema, no_body
 from django.core.exceptions import ValidationError
-
+from datetime import datetime, timedelta
+from rest_framework import status
 from makerapp.models import School, Company, Visit
 from makerapp.serializers import (
     SchoolSerializer,
@@ -13,8 +14,9 @@ from makerapp.serializers import (
     VisitSerializer,
     VisitStatusUpdateSerializer,
     VisitCloseSerializer,
+    BusySlotSerializer
 )
-from makerapp.services import VisitService
+from makerapp.services import VisitService, VISIT_CONSTRAINTS
 from makerauth.permissions import IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS
 
 
@@ -180,3 +182,34 @@ class VisitViewSet(ModelViewSet):
             return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'])
+    def busy_slots(self, request):
+        date_param = request.query_params.get('date')
+        if not date_param:
+            return Response(
+                {'detail': 'The "date" query param is required (YYYY-MM-DD).'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            target_date = datetime.strptime(date_param, '%Y-%m-%d').date()
+        except ValueError:
+            return Response(
+                {'detail': 'Invalid date format, use YYYY-MM-DD.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        visits = Visit.objects.filter(scheduling_date__date=target_date).exclude(acceptance_status='rejected')
+
+        slots = [
+            {
+                'start': visit.scheduling_date,
+                'end': visit.scheduling_date + timedelta(
+                    minutes=VISIT_CONSTRAINTS[visit.visit_type]['max_duration_minutes']
+                ),
+            }
+            for visit in visits
+        ]
+
+        return Response(BusySlotSerializer(slots, many=True).data)
