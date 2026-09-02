@@ -17,7 +17,7 @@ export function useLogin() {
     try {
       const tokens = await authService.login({ email, password });
       login(tokens);
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       setErrors(extractServerErrors(err));
     } finally {

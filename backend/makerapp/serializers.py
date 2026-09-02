@@ -63,3 +63,7 @@ class VisitCloseSerializer(serializers.ModelSerializer):
                 'real_number_of_visitors': 'Real number of visitors is required when closing a visit.'
             })
         return data
+
+class BusySlotSerializer(serializers.Serializer):
+    start = serializers.DateTimeField()
+    end = serializers.DateTimeField()
