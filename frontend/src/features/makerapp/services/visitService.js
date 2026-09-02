@@ -6,4 +6,6 @@ export const visitService = {
   listAll: () => apiClient.get(endpoints.visits.list),
   accept: (id) => apiClient.post(endpoints.visits.accept(id)),
   reject: (id) => apiClient.post(endpoints.visits.reject(id)),
+  create: (data) => apiClient.post(endpoints.visits.create, data),
+  getBusySlots: (date) => apiClient.get(endpoints.visits.busySlots(date)),
 };
