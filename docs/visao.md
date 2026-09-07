@@ -2,7 +2,7 @@
 
 | Data | Versão | Descrição | Autores |
 | :--: | :----: | :-------: | :-----: |
-| 05/09 /2026 | 1.0 | Versão inicial | Lucas Tales |
+| 05/09/2026 | 1.0 | Versão inicial | Lucas Tales |
 
 ## 1. Introdução
 
@@ -59,7 +59,7 @@ De forma geral, serão consideradas as seguintes partes:
 
 ## 3. Requisitos do sistema
 
-### 3.1
+### 3.1 Por subsistema/componente
 
 |Componente|Requisito|
 |:--|:--|
