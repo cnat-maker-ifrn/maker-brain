@@ -1,12 +1,15 @@
-import { useMyVisits, VisitCard } from '@/features/makerapp';
+import { useMyVisits, VisitCard, CreateVisitButton } from '@/features/makerapp';
 import { Spinner } from '@/components/ui/Spinner';
 
 export default function DashboardPage() {
-  const { visits, isLoading, error } = useMyVisits();
+  const { visits, isLoading, error, refetch } = useMyVisits();
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-forest-600 mb-6">Meus Agendamentos</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-forest-600">Meus Agendamentos</h1>
+        <CreateVisitButton onCreated={refetch} />
+      </div>
 
       {isLoading && <Spinner />}
       {error && <p className="text-danger-600">{error.non_field_errors || error.detail}</p>}
