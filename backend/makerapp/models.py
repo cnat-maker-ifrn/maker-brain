@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import FileExtensionValidator
 
 
 class School(models.Model):
@@ -78,4 +79,32 @@ class Visit(models.Model):
         db_table = "visits"
 
     def __str__(self):
-        return f"Visit {self.visit_type}"    
+        return f"Visit {self.visit_type}"
+
+class Service(models.Model):
+    SERVICE_TYPE_CHOICES = [
+        ('3d_printing', '3D Printing'),
+        ('laser_cutting', 'Laser Cutting'),
+        ('stamping', 'Stamping'),
+    ]
+
+    ALLOWED_FILE_EXTENSIONS = ['stl', 'obj', 'jpg', 'jpeg', 'png']
+
+    name = models.CharField(max_length=13, choices=SERVICE_TYPE_CHOICES)
+    file = models.FileField(
+        upload_to='service_files/',
+        validators=[FileExtensionValidator(allowed_extensions=ALLOWED_FILE_EXTENSIONS)],
+    )
+    description = models.TextField()
+    quantity = models.IntegerField()
+    requester = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='services',
+    )
+
+    class Meta:
+        db_table = "services"
+
+    def __str__(self):
+        return f"Service {self.name} ({self.quantity}x)"
