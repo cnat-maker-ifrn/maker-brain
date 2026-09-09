@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from makerapp.models import School, Company, Visit
+from makerapp.models import School, Company, Visit, Service
 
 
 class SchoolSerializer(serializers.ModelSerializer):
@@ -67,3 +67,11 @@ class VisitCloseSerializer(serializers.ModelSerializer):
 class BusySlotSerializer(serializers.Serializer):
     start = serializers.DateTimeField()
     end = serializers.DateTimeField()
+
+class ServiceSerializer(serializers.ModelSerializer):
+    requester_name = serializers.CharField(source='requester.name', read_only=True)
+
+    class Meta:
+        model = Service
+        fields = '__all__'
+        read_only_fields = ['requester']

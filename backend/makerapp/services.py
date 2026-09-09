@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from makerapp.models import Visit
+from makerapp.models import Visit, Service
 
 VISIT_CONSTRAINTS = {
     'fast':      {'max_duration_minutes': 20, 'max_visitors': 25},
@@ -105,3 +105,17 @@ class VisitService:
         visit.is_visit_closed = True
         visit.save()
         return visit
+
+class ServiceService:
+
+    @staticmethod
+    def _validate_quantity(quantity):
+        if quantity <= 0:
+            raise ValidationError({'quantity': 'Quantity must be greater than zero.'})
+
+    @staticmethod
+    def create_service(requester, validated_data: dict) -> Service:
+        ServiceService._validate_quantity(validated_data['quantity'])
+
+        service = Service.objects.create(requester=requester, **validated_data)
+        return service
