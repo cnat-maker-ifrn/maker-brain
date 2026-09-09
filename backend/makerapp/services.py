@@ -31,6 +31,34 @@ class VisitService:
             )
 
     @staticmethod
+    def _validate_no_schedule_conflict(scheduling_date, visit_type, exclude_pk=None):
+        """
+        Ensures no other non-rejected visit overlaps with the requested time slot,
+        using each visit's own duration (based on its visit_type).
+        """
+        new_duration = timedelta(minutes=VISIT_CONSTRAINTS[visit_type]['max_duration_minutes'])
+        new_start = scheduling_date
+        new_end = scheduling_date + new_duration
+
+        same_day_visits = Visit.objects.filter(
+            scheduling_date__date=scheduling_date.date()
+        ).exclude(acceptance_status='rejected')
+
+        if exclude_pk is not None:
+            same_day_visits = same_day_visits.exclude(pk=exclude_pk)
+
+        for existing_visit in same_day_visits:
+            existing_start = existing_visit.scheduling_date
+            existing_end = existing_start + timedelta(
+                minutes=VISIT_CONSTRAINTS[existing_visit.visit_type]['max_duration_minutes']
+            )
+
+            if existing_start < new_end and new_start < existing_end:
+                raise ValidationError(
+                    {'scheduling_date': 'There is already a visit scheduled that overlaps with this time slot.'}
+                )
+
+    @staticmethod
     def create_visit(requester, validated_data: dict) -> Visit:
         scheduling_date = validated_data['scheduling_date']
         visit_type = validated_data['visit_type']
@@ -38,6 +66,7 @@ class VisitService:
 
         VisitService._validate_scheduling_date(scheduling_date)
         VisitService._validate_forecast_visitors(visit_type, forecast_number_of_visitors)
+        VisitService._validate_no_schedule_conflict(scheduling_date, visit_type)
 
         visit = Visit.objects.create(requester=requester, **validated_data)
         return visit
