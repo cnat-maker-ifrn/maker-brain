@@ -1,4 +1,4 @@
-import { useMyVisits, VisitCard, CreateVisitButton } from '@/features/makerapp';
+import { useMyVisits, VisitCard, CreateVisitButton, CreateServiceButton } from '@/features/makerapp';
 import { Spinner } from '@/components/ui/Spinner';
 
 export default function DashboardPage() {
@@ -8,7 +8,10 @@ export default function DashboardPage() {
     <>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-forest-600">Meus Agendamentos</h1>
-        <CreateVisitButton onCreated={refetch} />
+        <div className="flex items-center gap-3">
+          <CreateServiceButton />
+          <CreateVisitButton onCreated={refetch} />
+        </div>
       </div>
 
       {isLoading && <Spinner />}

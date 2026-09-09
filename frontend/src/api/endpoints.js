@@ -26,4 +26,8 @@ export const endpoints = {
   companies: {
     list: '/makerapp/companies/',
   },
+  services: {
+    create: '/makerapp/services/',
+    mine: '/makerapp/services/mine/',
+  },
 };

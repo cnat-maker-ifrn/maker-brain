@@ -7,17 +7,18 @@ from drf_yasg.utils import swagger_auto_schema, no_body
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 from rest_framework import status
-from makerapp.models import School, Company, Visit
+from makerapp.models import School, Company, Visit, Service
 from makerapp.serializers import (
     SchoolSerializer,
     CompanySerializer,
     VisitSerializer,
     VisitStatusUpdateSerializer,
     VisitCloseSerializer,
-    BusySlotSerializer
+    BusySlotSerializer,
+    ServiceSerializer
 )
-from makerapp.services import VisitService, VISIT_CONSTRAINTS
-from makerauth.permissions import IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS
+from makerapp.services import VisitService, VISIT_CONSTRAINTS, ServiceService
+from makerauth.permissions import IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS, MANAGER_GROUPS
 
 
 class SchoolViewSet(ModelViewSet):
@@ -213,3 +214,76 @@ class VisitViewSet(ModelViewSet):
         ]
 
         return Response(BusySlotSerializer(slots, many=True).data)
+
+class ServiceViewSet(ModelViewSet):
+    serializer_class = ServiceSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user or not user.is_authenticated:
+            return Service.objects.none()
+
+        if self.action == 'mine':
+            return Service.objects.filter(requester=user)
+
+        if user.groups.filter(name__in=MANAGER_GROUPS).exists():
+            return Service.objects.all()
+
+        return Service.objects.filter(requester=user)
+
+    def get_permissions(self):
+        if self.action in ['create', 'mine']:
+            return [IsAuthenticated()]
+
+        if self.action == 'list':
+            return [IsOwnerOrManager()]
+
+        return [IsAuthenticated()]
+
+    @action(detail=False, methods=['get'])
+    def mine(self, request):
+        serializer = ServiceSerializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            service = ServiceService.create_service(
+                requester=request.user,
+                validated_data=serializer.validated_data,
+            )
+        except ValidationError as exc:
+            return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            ServiceSerializer(service).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    def update(self, request, *args, **kwargs):
+        service = self.get_object()
+        is_manager = request.user.groups.filter(name__in=MANAGER_GROUPS).exists()
+
+        if service.requester != request.user and not is_manager:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        partial = kwargs.pop('partial', False)
+        serializer = self.get_serializer(service, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        service = self.get_object()
+        is_manager = request.user.groups.filter(name__in=MANAGER_GROUPS).exists()
+
+        if service.requester != request.user and not is_manager:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        service.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
