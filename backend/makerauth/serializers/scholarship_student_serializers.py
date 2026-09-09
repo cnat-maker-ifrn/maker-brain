@@ -13,7 +13,6 @@ class ScholarshipStudentRegisterSerializer(serializers.ModelSerializer):
             'name',
             'cellphone',
             'enrollment',
-            'profile_picture',
             'accepts_marketing_contact',
             'password'
         ]
@@ -37,7 +36,6 @@ class ScholarshipStudentUpdateSerializer(serializers.ModelSerializer):
             'email',
             'name',
             'cellphone',
-            'profile_picture',
             'accepts_marketing_contact',
             'password'
         ]
@@ -68,7 +66,6 @@ class ScholarshipStudentDetailSerializer(serializers.ModelSerializer):
             'cellphone',
             'bond',
             'enrollment',
-            'profile_picture',
             'accepts_marketing_contact',
             'groups'
         ]
@@ -85,7 +82,6 @@ class ScholarshipStudentListSerializer(serializers.ModelSerializer):
             'cellphone',
             'bond',
             'enrollment',
-            'profile_picture',
             'accepts_marketing_contact',
             'groups'
         ]

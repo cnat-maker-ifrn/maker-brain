@@ -8,7 +8,6 @@ class School(models.Model):
         ('private', 'Private'),
     ]
 
-    inep_code = models.IntegerField(unique=True, null=True, blank=True)
     name = models.CharField(max_length=255)
     school_type = models.CharField(max_length=7, choices=SCHOOL_TYPE_CHOICES)
     city = models.CharField(max_length=100, blank=True) 
