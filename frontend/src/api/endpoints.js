@@ -2,6 +2,7 @@ export const endpoints = {
   auth: {
     login: '/makerauth/auth/token/',
     refresh: '/makerauth/auth/token/refresh/',
+    me: '/makerauth/me/',
   },
   requesters: {
     register: '/makerauth/requesters/',

@@ -4,7 +4,8 @@ import { LogoutButton } from '@/components/ui/LogoutButton';
 
 export function Navbar() {
   const { user } = useAuth();
-  const initials = user?.email ? user.email.charAt(0).toUpperCase() : '?';
+  const displayName = user?.name || user?.email || '';
+  const initials = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
@@ -16,9 +17,14 @@ export function Navbar() {
       </Link>
 
       <div className="flex items-center gap-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-forest-100 text-sm font-semibold text-forest-700">
+        <Link
+          to="/profile"
+          title="Meu Perfil"
+          aria-label="Meu Perfil"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-forest-100 text-sm font-semibold text-forest-700 hover:bg-forest-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-forest-500 focus:ring-offset-2 transition-all"
+        >
           {initials}
-        </div>
+        </Link>
         <LogoutButton />
       </div>
     </header>

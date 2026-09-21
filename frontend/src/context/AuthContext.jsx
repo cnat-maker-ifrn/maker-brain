@@ -12,6 +12,7 @@ function getUserFromToken(accessToken) {
 
   return {
     id: decoded.user_id,
+    name: decoded.name,
     email: decoded.email,
     groups: decoded.groups || [],
   };

@@ -13,3 +13,4 @@ export { useRegisterScholarshipStudent } from './hooks/useRegisterScholarshipStu
 export { useLogin } from './hooks/useLogin';
 export { usePendingScholarshipStudents } from './hooks/usePendingScholarshipStudents';
 export { useScholarshipStudentActions } from './hooks/useScholarshipStudentActions';
+export { useUserProfile } from './hooks/useUserProfile';

@@ -18,4 +18,5 @@ export const serviceService = {
     apiClient.post(endpoints.services.create, toFormData(data), {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  listMine: () => apiClient.get(endpoints.services.mine),
 };

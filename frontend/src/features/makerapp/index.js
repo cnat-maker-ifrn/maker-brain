@@ -13,10 +13,12 @@ export { VisitCard } from './components/VisitCard';
 export { CreateServiceButton } from './components/CreateServiceButton';
 export { CreateServiceModal } from './components/CreateServiceModal';
 export { CreateServiceForm } from './components/CreateServiceForm';
+export { ServiceCard } from './components/ServiceCard';
 
 // hooks
 export { useCreateVisit } from './hooks/useCreateVisit';
 export { useBusySlots } from './hooks/useBusySlots';
 export { useMyVisits } from './hooks/useMyVisits';
+export { useMyServices } from './hooks/useMyServices';
 export { useVisitManagement } from './hooks/useVisitManagement';
 export { useCreateService } from './hooks/useCreateService';
