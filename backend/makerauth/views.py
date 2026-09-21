@@ -2,6 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema, no_body
 from drf_yasg import openapi
 from makerauth.models import User
@@ -130,3 +131,11 @@ class ScholarshipStudentViewSet(ModelViewSet):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = RequesterDetailSerializer(request.user)
+        return Response(serializer.data)
