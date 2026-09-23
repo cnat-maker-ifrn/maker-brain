@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { LogoutButton } from '@/components/ui/LogoutButton';
+import logo from '@/assets/logo.png';
 
 export function Navbar() {
   const { user } = useAuth();
@@ -11,9 +12,10 @@ export function Navbar() {
     <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
       <Link
         to="/"
-        className="font-mono text-sm font-semibold uppercase tracking-[0.3em] text-forest-600"
+        className="flex items-center gap-3 hover:opacity-90 transition-opacity"
       >
-        MakerBrain
+        <img src={logo} alt="CNAT Maker" className="h-9 w-auto object-contain" />
+        <span className="text-base font-semibold text-gray-900">CNAT Maker</span>
       </Link>
 
       <div className="flex items-center gap-4">
