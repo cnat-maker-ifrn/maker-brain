@@ -33,4 +33,9 @@ export const authService = {
     const { data } = await apiClient.get(endpoints.auth.me);
     return data;
   },
+
+  updateProfile: async (payload) => {
+    const { data } = await apiClient.patch(endpoints.auth.me, payload);
+    return data;
+  },
 };

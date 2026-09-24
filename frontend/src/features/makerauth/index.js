@@ -6,6 +6,7 @@ export { RequesterRegisterForm } from './components/RequesterRegisterForm';
 export { ScholarshipStudentRegisterForm } from './components/ScholarshipStudentRegisterForm';
 export { LoginForm } from './components/LoginForm';
 export { PendingScholarshipStudentCard } from './components/PendingScholarshipStudentCard';
+export { EditProfileModal } from './components/EditProfileModal';
 
 // hooks
 export { useRegisterRequester } from './hooks/useRegisterRequester';

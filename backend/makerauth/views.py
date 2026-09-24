@@ -22,6 +22,7 @@ from .services import UserService
 from makerauth.permissions import IsOwnerOrManager, IsSelfUpdate
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers.token_serializers import CustomTokenObtainPairSerializer
+from .serializers.user_serializers import UserProfileUpdateSerializer
 
 
 class RequesterViewSet(ModelViewSet):
@@ -136,6 +137,17 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(responses={200: RequesterDetailSerializer})
     def get(self, request):
         serializer = RequesterDetailSerializer(request.user)
         return Response(serializer.data)
+
+    @swagger_auto_schema(
+        request_body=UserProfileUpdateSerializer,
+        responses={200: RequesterDetailSerializer}
+    )
+    def patch(self, request):
+        serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(RequesterDetailSerializer(request.user).data)
