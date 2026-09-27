@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.db import IntegrityError
-from app.models import Company
+from makerapp.models import Company
 
 
 class CompanyModelTest(TestCase):

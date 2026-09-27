@@ -12,6 +12,7 @@ function getUserFromToken(accessToken) {
 
   return {
     id: decoded.user_id,
+    name: decoded.name,
     email: decoded.email,
     groups: decoded.groups || [],
   };
@@ -41,12 +42,17 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (updatedFields) => {
+    setUser((prev) => (prev ? { ...prev, ...updatedFields } : prev));
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
     isLoading,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

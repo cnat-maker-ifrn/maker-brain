@@ -69,3 +69,16 @@ export function validateRegisterForm(values) {
 
   return errors;
 }
+
+export function validateProfileForm(values) {
+  const errors = {};
+
+  if (!values.name?.trim()) {
+    errors.name = 'Informe seu nome completo.';
+  }
+  if (!values.cellphone || values.cellphone.replace(/\D/g, '').length < 10) {
+    errors.cellphone = 'Informe um telefone válido.';
+  }
+
+  return errors;
+}

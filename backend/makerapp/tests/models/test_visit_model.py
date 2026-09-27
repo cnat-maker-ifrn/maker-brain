@@ -1,18 +1,19 @@
 from django.test import TestCase
-from app.models import User, School, Company, Visit
+from makerapp.models import School, Company, Visit
+from makerauth.models import User
 import datetime
 
 
 class VisitModelTest(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create(
-            auth_id=1,
-            cpf="12345678901",
+        self.user = User.objects.create_user(
+            cpf="52998224725",
             email="requester@example.com",
             name="Requester",
             cellphone="84999999999",
             bond="external",
+            password="password123",
         )
         self.school = School.objects.create(
             name="Escola Pública Teste",
@@ -66,7 +67,7 @@ class VisitModelTest(TestCase):
     def test_acceptance_status_defaults_to_pending(self):
         visit = self._make_visit()
         visit.save()
-        self.assertEqual(Visit.objects.get(pk=visit.pk).is_visit_accepted, "pending")
+        self.assertEqual(Visit.objects.get(pk=visit.pk).acceptance_status, "pending")
 
     def test_real_number_of_visitors_is_optional(self):
         visit = self._make_visit()
@@ -161,16 +162,16 @@ class VisitModelTest(TestCase):
     def test_visit_can_be_accepted(self):
         visit = self._make_visit()
         visit.save()
-        visit.is_visit_accepted = "accepted"
+        visit.acceptance_status = "accepted"
         visit.save()
-        self.assertEqual(Visit.objects.get(pk=visit.pk).is_visit_accepted, "accepted")
+        self.assertEqual(Visit.objects.get(pk=visit.pk).acceptance_status, "accepted")
 
     def test_visit_can_be_rejected(self):
         visit = self._make_visit()
         visit.save()
-        visit.is_visit_accepted = "rejected"
+        visit.acceptance_status = "rejected"
         visit.save()
-        self.assertEqual(Visit.objects.get(pk=visit.pk).is_visit_accepted, "rejected")
+        self.assertEqual(Visit.objects.get(pk=visit.pk).acceptance_status, "rejected")
 
     def test_visit_is_not_closed_without_photo_description_observations(self):
         visit = self._make_visit()

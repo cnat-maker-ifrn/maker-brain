@@ -23,6 +23,10 @@ export function Sidebar() {
           Dashboard
         </NavLink>
 
+        <NavLink to="/profile" className={linkClassName}>
+          Meu perfil
+        </NavLink>
+
         {canManageVisits && (
           <NavLink to="/visits" className={linkClassName}>
             Gerenciamento de visitas

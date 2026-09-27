@@ -3,6 +3,7 @@ import { RegisterRequesterPage } from '@/pages/RegisterRequesterPage';
 import { RegisterScholarshipStudentPage } from '@/pages/RegisterScholarshipStudentPage';
 import { LoginPage } from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
+import ProfilePage from '@/pages/ProfilePage';
 import VisitManagementPage from '@/pages/VisitManagementPage';
 import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
@@ -18,6 +19,8 @@ export function AppRoutes() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<DashboardPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/perfil" element={<ProfilePage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedGroups={VISIT_MANAGER_GROUPS} />}>
