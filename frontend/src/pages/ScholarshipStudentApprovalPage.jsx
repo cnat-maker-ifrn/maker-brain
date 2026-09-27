@@ -11,7 +11,7 @@ export default function ScholarshipStudentsApprovalPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-forest-600 mb-6">
+      <h1 className="text-xl sm:text-2xl font-semibold text-forest-600 mb-4 sm:mb-6">
         Solicitações de Cadastro — Bolsistas
       </h1>
 

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-montserrat: "Montserrat", sans-serif;
+
   --color-forest-50: #eaf7f0;
   --color-forest-100: #cfeedd;
   --color-forest-200: #a8ddbf;

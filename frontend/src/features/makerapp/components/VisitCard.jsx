@@ -46,13 +46,13 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing }) {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-gray-200 bg-white rounded-lg p-4 shadow-sm hover:border-forest-200 transition-colors">
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs uppercase tracking-wider text-forest-600 font-semibold">
             Visita
           </span>
           <span className="text-gray-300">•</span>
-          <p className="text-base font-medium text-gray-900">
+          <p className="text-base font-medium text-gray-900 truncate">
             {VISIT_TYPE_LABELS[visit.visit_type] || visit.visit_type}
           </p>
         </div>
@@ -88,13 +88,13 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing }) {
         </div>
 
         {visit.description && (
-          <p className="text-xs text-gray-600 pt-1 line-clamp-2">
+          <p className="text-xs text-gray-600 pt-1 line-clamp-2 break-words">
             {visit.description}
           </p>
         )}
       </div>
 
-      <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
+      <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 self-stretch sm:self-center shrink-0 border-t border-gray-100 pt-3 sm:border-t-0 sm:pt-0">
         <span
           className={`px-3 py-1 rounded-full text-xs font-medium ${status.style}`}
         >
@@ -102,12 +102,12 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing }) {
         </span>
 
         {showActions ? (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {onAccept ? (
               <button
                 onClick={() => onAccept(visit.id)}
                 disabled={isProcessing}
-                className="px-3 py-1.5 rounded bg-forest-600 text-white font-medium hover:bg-forest-500 disabled:opacity-50"
+                className="px-3.5 py-1.5 rounded-md bg-forest-600 text-white text-xs sm:text-sm font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors"
               >
                 Aceitar
               </button>
@@ -116,7 +116,7 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing }) {
               <button
                 onClick={() => onReject(visit.id)}
                 disabled={isProcessing}
-                className="px-3 py-1.5 rounded border border-danger-500 text-danger-600 hover:bg-danger-50 disabled:opacity-50"
+                className="px-3.5 py-1.5 rounded-md border border-danger-500 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs sm:text-sm font-medium transition-colors"
               >
                 Rejeitar
               </button>

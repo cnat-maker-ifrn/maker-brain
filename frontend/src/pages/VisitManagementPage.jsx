@@ -6,7 +6,9 @@ export default function VisitManagementPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-forest-600 mb-6">Gerenciamento de Visitas</h1>
+      <h1 className="text-xl sm:text-2xl font-semibold text-forest-600 mb-4 sm:mb-6">
+        Gerenciamento de Visitas
+      </h1>
 
       {isLoading && <Spinner />}
       {error && <p className="text-danger-600">{error.non_field_errors || error.detail}</p>}

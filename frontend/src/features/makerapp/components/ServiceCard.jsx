@@ -39,14 +39,14 @@ export function ServiceCard({ service }) {
   const fileName = service.file ? service.file.split('/').pop() : null;
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-gray-200 bg-white rounded-lg p-4 shadow-sm hover:border-forest-200 transition-colors">
-      <div className="flex-1 space-y-1">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border border-gray-200 bg-white rounded-lg p-4 shadow-sm hover:border-forest-200 transition-colors">
+      <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs uppercase tracking-wider text-forest-600 font-semibold">
             Serviço
           </span>
           <span className="text-gray-300">•</span>
-          <p className="text-base font-medium text-gray-900">{typeLabel}</p>
+          <p className="text-base font-medium text-gray-900 truncate">{typeLabel}</p>
         </div>
 
         {service.requester_name && (
@@ -55,7 +55,7 @@ export function ServiceCard({ service }) {
           </p>
         )}
 
-        <p className="text-sm text-gray-600 line-clamp-2">
+        <p className="text-sm text-gray-600 line-clamp-2 break-words">
           {service.description}
         </p>
 
@@ -65,7 +65,7 @@ export function ServiceCard({ service }) {
           </span>
 
           {fileName && (
-            <span className="inline-flex items-center gap-1 text-forest-600 truncate max-w-xs">
+            <span className="inline-flex items-center gap-1 text-forest-600 max-w-[180px] sm:max-w-xs truncate">
               <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
               </svg>
@@ -87,7 +87,7 @@ export function ServiceCard({ service }) {
         </div>
       </div>
 
-      <div className="flex items-center self-start sm:self-center shrink-0">
+      <div className="flex items-center self-start sm:self-center shrink-0 border-t border-gray-100 pt-2.5 sm:border-t-0 sm:pt-0 w-full sm:w-auto">
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${status.style}`}>
           {status.label}
         </span>

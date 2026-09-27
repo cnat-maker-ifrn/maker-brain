@@ -71,21 +71,21 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdated }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8">
-        <div className="mb-6 flex items-start justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4 overflow-y-auto">
+      <div className="relative my-auto w-full max-w-lg max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto rounded-xl border border-gray-200 bg-white p-4 sm:p-6 md:p-8 shadow-xl">
+        <div className="mb-4 sm:mb-6 flex items-start justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-forest-600">
               Meu Perfil
             </p>
-            <h2 className="mt-1 text-xl font-semibold text-gray-900">
+            <h2 className="mt-1 text-lg sm:text-xl font-semibold text-gray-900">
               Editar Perfil
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-forest-500"
             aria-label="Fechar"
           >
             ✕
@@ -119,16 +119,16 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdated }) {
             required
           />
 
-          <div className="mt-6 flex items-center justify-end gap-3 pt-2">
+          <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 text-center"
             >
               Cancelar
             </button>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit" isLoading={isSubmitting} className="w-full sm:w-auto">
               Salvar alterações
             </Button>
           </div>

@@ -9,7 +9,7 @@ export function CreateServiceButton({ onCreated, className = '' }) {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`inline-flex items-center gap-2 rounded-md border border-forest-500 px-4 py-2.5 text-sm font-semibold
+        className={`inline-flex items-center justify-center gap-2 rounded-md border border-forest-500 px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
           text-forest-600 transition-colors hover:bg-forest-50 ${className}`}
       >
         + Novo serviço

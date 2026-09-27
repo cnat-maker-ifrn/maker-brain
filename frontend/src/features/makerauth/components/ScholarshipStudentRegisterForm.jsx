@@ -164,9 +164,9 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
             type="file"
             accept="image/*"
             onChange={setFile}
-            className="text-sm text-gray-500 file:mr-3 file:rounded-md file:border-0
-              file:bg-forest-50 file:px-3.5 file:py-2 file:text-sm file:font-medium
-              file:text-forest-700 hover:file:bg-forest-100"
+            className="text-xs sm:text-sm text-gray-500 file:mr-2.5 sm:file:mr-3 file:rounded-md file:border-0
+              file:bg-forest-50 file:px-3 sm:file:px-3.5 file:py-2 file:text-xs sm:file:text-sm file:font-medium
+              file:text-forest-700 hover:file:bg-forest-100 max-w-full"
           />
         </div>
       </fieldset>

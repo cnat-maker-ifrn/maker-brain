@@ -6,11 +6,11 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-forest-600">Meus Agendamentos</h1>
-        <div className="flex items-center gap-3">
-          <CreateServiceButton />
-          <CreateVisitButton onCreated={refetch} />
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl sm:text-2xl font-semibold text-forest-600">Meus Agendamentos</h1>
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+          <CreateServiceButton className="flex-1 sm:flex-initial" />
+          <CreateVisitButton onCreated={refetch} className="flex-1 sm:flex-initial" />
         </div>
       </div>
 

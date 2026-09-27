@@ -47,7 +47,7 @@ export function SlotPicker({ visitType, value, onChange }) {
     <div className="flex flex-col gap-4">
       <div>
         <p className="mb-2 text-sm font-medium text-gray-700">Dia</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 -mb-1 sm:flex-wrap">
           {candidateDates.map((date) => {
             const isSelected = date.toDateString() === selectedDate.toDateString();
             return (
@@ -55,7 +55,7 @@ export function SlotPicker({ visitType, value, onChange }) {
                 type="button"
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`rounded-md border px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                className={`shrink-0 rounded-md border px-3 py-1.5 text-xs sm:text-sm font-medium capitalize transition-colors ${
                   isSelected
                     ? 'border-forest-500 bg-forest-600 text-white'
                     : 'border-gray-200 text-gray-600 hover:border-forest-400 hover:text-forest-600'
@@ -73,7 +73,7 @@ export function SlotPicker({ visitType, value, onChange }) {
         {isLoading ? (
           <p className="text-sm text-gray-400">Carregando horários...</p>
         ) : (
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 min-[380px]:grid-cols-3 sm:grid-cols-4 gap-2">
             {slots.map((slot) => {
               const available = isSlotAvailable(slot, busySlots, minStart);
               const isSelected = value?.getTime() === slot.start.getTime();
@@ -84,7 +84,7 @@ export function SlotPicker({ visitType, value, onChange }) {
                   key={slot.start.toISOString()}
                   disabled={!available}
                   onClick={() => onChange(slot.start)}
-                  className={`rounded-md border px-2 py-2 text-sm font-medium transition-colors ${
+                  className={`rounded-md border px-2 py-2 text-xs sm:text-sm font-medium transition-colors ${
                     !available
                       ? 'cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300'
                       : isSelected
