@@ -17,6 +17,12 @@ const BOND_LABELS = {
   external: 'Externo',
 };
 
+function formatBond(bond) {
+  if (!bond) return null;
+  const key = String(bond).toLowerCase().trim().replace(/[\s-]+/g, '_');
+  return BOND_LABELS[key] || BOND_LABELS[bond] || bond;
+}
+
 function formatCpf(cpf) {
   if (!cpf || cpf.length !== 11) return cpf;
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
@@ -142,17 +148,9 @@ export default function ProfilePage() {
               <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 break-words">{displayName}</h1>
               {profile?.bond && (
                 <span className="rounded-md bg-forest-50 px-2.5 py-0.5 text-xs font-medium text-forest-700 border border-forest-200">
-                  {BOND_LABELS[profile.bond] || profile.bond}
+                  {formatBond(profile.bond)}
                 </span>
               )}
-              {profile?.groups?.map((group) => (
-                <span
-                  key={group}
-                  className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 border border-gray-200"
-                >
-                  {group}
-                </span>
-              ))}
             </div>
 
             <p className="text-sm text-gray-500 break-all">{profile?.email}</p>
