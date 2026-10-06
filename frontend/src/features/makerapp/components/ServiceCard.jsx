@@ -33,13 +33,71 @@ function getServiceStatus(service) {
   };
 }
 
-export function ServiceCard({ service }) {
+export function ServiceCard({ service, layout = 'list', className = '' }) {
   const status = getServiceStatus(service);
   const typeLabel = SERVICE_TYPE_LABELS[service.name] || service.name;
   const fileName = service.file ? service.file.split('/').pop() : null;
 
+  if (layout === 'carousel') {
+    return (
+      <div className={`flex flex-col justify-between border border-gray-200 bg-white rounded-xl p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-forest-300 transition-all h-full ${className}`}>
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="font-mono text-xs uppercase tracking-wider text-forest-600 font-semibold">
+                Serviço
+              </span>
+              <span className="text-gray-300">•</span>
+              <p className="text-base font-medium text-gray-900 truncate">{typeLabel}</p>
+            </div>
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0 ${status.style}`}>
+              {status.label}
+            </span>
+          </div>
+
+          {service.requester_name && (
+            <p className="text-xs sm:text-sm text-gray-500">
+              Solicitante: <span className="font-medium text-gray-700">{service.requester_name}</span>
+            </p>
+          )}
+
+          <p className="text-xs sm:text-sm text-gray-600 line-clamp-3 break-words">
+            {service.description}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-2 text-xs text-gray-500 border-t border-gray-100">
+            <span className="inline-flex items-center gap-1 font-medium text-gray-700">
+              Quantidade: <span className="text-forest-700 font-semibold">{service.quantity}</span>
+            </span>
+
+            {fileName && (
+              <span className="inline-flex items-center gap-1 text-forest-600 max-w-[180px] sm:max-w-xs truncate">
+                <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+                {service.file.startsWith('http') || service.file.startsWith('/') ? (
+                  <a
+                    href={service.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline truncate"
+                    title={fileName}
+                  >
+                    {fileName}
+                  </a>
+                ) : (
+                  <span className="truncate" title={fileName}>{fileName}</span>
+                )}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border border-gray-200 bg-white rounded-lg p-4 shadow-sm hover:border-forest-200 transition-colors">
+    <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border border-gray-200 bg-white rounded-lg p-4 shadow-sm hover:border-forest-200 transition-colors ${className}`}>
       <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs uppercase tracking-wider text-forest-600 font-semibold">
