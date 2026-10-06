@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import logo from '@/assets/logo.png';
 
+const OWNER_GROUPS = ['Owners'];
 const MANAGER_GROUPS = ['Owners', 'Managers'];
 const VISIT_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
 
@@ -14,6 +15,7 @@ const linkClassName = ({ isActive }) =>
 
 export function Sidebar({ isOpen, onClose }) {
   const { user } = useAuth();
+  const isOwner = user?.groups?.some((g) => OWNER_GROUPS.includes(g));
   const isManager = user?.groups?.some((g) => MANAGER_GROUPS.includes(g));
   const canManageVisits = user?.groups?.some((g) => VISIT_MANAGER_GROUPS.includes(g));
 
@@ -47,11 +49,20 @@ export function Sidebar({ isOpen, onClose }) {
       )}
 
       {isManager && (
-        <NavLink to="/scholarship-students/pending" onClick={handleLinkClick} className={linkClassName}>
+        <NavLink to="/scholarship-students" onClick={handleLinkClick} className={linkClassName}>
           <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <span>Aprovação de bolsistas</span>
+          <span>Gestão de bolsistas</span>
+        </NavLink>
+      )}
+
+      {isOwner && (
+        <NavLink to="/relatorios" onClick={handleLinkClick} className={linkClassName}>
+          <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span>Relatórios</span>
         </NavLink>
       )}
     </nav>

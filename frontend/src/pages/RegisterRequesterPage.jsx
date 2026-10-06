@@ -11,7 +11,7 @@ export function RegisterRequesterPage() {
       description="Cadastre-se como solicitante para agendar visitas técnicas, infantis ou rápidas ao MakerLab. A aprovação depende do seu vínculo institucional."
       footer={
         <>
-          É bolsista do MakerLab?{' '}
+          É bolsista do CNAT Maker?{' '}
           <Link to="/register/bolsista" className="font-medium text-forest-600 underline-offset-4 hover:underline">
             Cadastre-se como bolsista
           </Link>

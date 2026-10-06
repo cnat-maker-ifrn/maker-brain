@@ -6,6 +6,7 @@ import DashboardPage from '@/pages/DashboardPage';
 import ProfilePage from '@/pages/ProfilePage';
 import VisitManagementPage from '@/pages/VisitManagementPage';
 import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
+import ReportsPage from '@/pages/ReportsPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
 const VISIT_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
@@ -28,7 +29,13 @@ export function AppRoutes() {
       </Route>
 
       <Route element={<ProtectedRoute allowedGroups={['Owners', 'Managers']} />}>
+        <Route path="/scholarship-students" element={<ScholarshipStudentsApprovalPage />} />
         <Route path="/scholarship-students/pending" element={<ScholarshipStudentsApprovalPage />} />
+      </Route>
+
+      <Route element={<ProtectedRoute allowedGroups={['Owners']} />}>
+        <Route path="/relatorios" element={<ReportsPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
       </Route>
     </Routes>
   );

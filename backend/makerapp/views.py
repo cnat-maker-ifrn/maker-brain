@@ -1,12 +1,12 @@
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from drf_yasg.utils import swagger_auto_schema, no_body
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
-from rest_framework import status
 from makerapp.models import School, Company, Visit, Service
 from makerapp.serializers import (
     SchoolSerializer,
@@ -18,7 +18,8 @@ from makerapp.serializers import (
     ServiceSerializer
 )
 from makerapp.services import VisitService, VISIT_CONSTRAINTS, ServiceService
-from makerauth.permissions import IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS, MANAGER_GROUPS
+from makerapp.report_service import ReportService
+from makerauth.permissions import IsOwner, IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS, MANAGER_GROUPS
 
 
 class SchoolViewSet(ModelViewSet):
@@ -287,3 +288,39 @@ class ServiceViewSet(ModelViewSet):
 
         service.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReportViewSet(ViewSet):
+    """
+    Handles report generation (data and PDF) exclusively for Owners.
+    """
+    permission_classes = [IsOwner]
+
+    def list(self, request):
+        year = request.query_params.get('year')
+        month = request.query_params.get('month')
+        data = ReportService.get_report_data(year=year, month=month)
+        return Response(data)
+
+    @action(detail=False, methods=['get'], url_path='data')
+    def get_data(self, request):
+        year = request.query_params.get('year')
+        month = request.query_params.get('month')
+        data = ReportService.get_report_data(year=year, month=month)
+        return Response(data)
+
+    @action(detail=False, methods=['get'], url_path='pdf')
+    def export_pdf(self, request):
+        year = request.query_params.get('year')
+        month = request.query_params.get('month')
+        data = ReportService.get_report_data(year=year, month=month)
+        pdf_bytes = ReportService.generate_pdf(data)
+
+        target_year = data['period']['year']
+        target_month = data['period']['month']
+        suffix = f"{target_year}_{target_month:02d}" if target_month else f"{target_year}_anual"
+        filename = f"relatorio_cnat_maker_{suffix}.pdf"
+
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response

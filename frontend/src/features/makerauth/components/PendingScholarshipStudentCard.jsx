@@ -18,7 +18,7 @@ export function PendingScholarshipStudentCard({ student, onAccept, onReject, isP
           Aprovar
         </button>
         <button
-          onClick={() => onReject(student.cpf)}
+          onClick={() => onReject(student.id)}
           disabled={isProcessing}
           className="flex-1 sm:flex-initial px-4 py-2 rounded-md border border-danger-500 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-sm font-medium transition-colors text-center"
         >
