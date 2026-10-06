@@ -70,7 +70,7 @@ export function validateRegisterForm(values) {
   return errors;
 }
 
-export function validateProfileForm(values) {
+export function validateProfileForm(values, options = {}) {
   const errors = {};
 
   if (!values.name?.trim()) {
@@ -80,5 +80,28 @@ export function validateProfileForm(values) {
     errors.cellphone = 'Informe um telefone válido.';
   }
 
+  const shouldCheckPassword =
+    options.checkPassword ??
+    Boolean(values.current_password || values.new_password || values.confirm_password);
+
+  if (shouldCheckPassword) {
+    if (!values.current_password) {
+      errors.current_password = 'Informe sua senha atual.';
+    }
+    if (!values.new_password) {
+      errors.new_password = 'Informe a nova senha.';
+    } else if (values.new_password.length < 8) {
+      errors.new_password = 'A nova senha deve ter no mínimo 8 caracteres.';
+    } else if (values.current_password && values.new_password === values.current_password) {
+      errors.new_password = 'A nova senha deve ser diferente da senha atual.';
+    }
+
+    if (!values.confirm_password) {
+      errors.confirm_password = 'Confirme a nova senha.';
+    } else if (values.new_password && values.new_password !== values.confirm_password) {
+      errors.confirm_password = 'As senhas não conferem.';
+    }
+  }
+
   return errors;
-}
+}

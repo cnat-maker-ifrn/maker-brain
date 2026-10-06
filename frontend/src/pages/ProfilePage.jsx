@@ -57,6 +57,7 @@ function getItemStatusKey(item, isService = false) {
 export default function ProfilePage() {
   const { profile, isLoading: profileLoading, refetch: refetchProfile } = useUserProfile();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
   const {
     visits,
     isLoading: visitsLoading,
@@ -136,6 +137,25 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6">
+      {successMessage && (
+        <div className="rounded-lg border border-forest-200 bg-forest-50 p-4 text-sm font-medium text-forest-800 flex items-center justify-between shadow-2xs">
+          <div className="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-forest-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{successMessage}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSuccessMessage(null)}
+            className="text-forest-600 hover:text-forest-800 p-1 text-sm font-bold"
+            aria-label="Fechar notificação"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Profile Header */}
       <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 sm:gap-5">
@@ -405,8 +425,13 @@ export default function ProfilePage() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         profile={profile}
-        onUpdated={() => {
+        onUpdated={(_updated, changedPassword) => {
           refetchProfile?.();
+          setSuccessMessage(
+            changedPassword
+              ? 'Perfil e senha atualizados com sucesso!'
+              : 'Perfil atualizado com sucesso!'
+          );
         }}
       />
     </div>
