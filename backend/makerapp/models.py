@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 
@@ -115,3 +116,34 @@ class Service(models.Model):
 
     def __str__(self):
         return f"Service {self.name} ({self.quantity}x)"
+
+
+class ScheduleBlock(models.Model):
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+    all_day = models.BooleanField(default=True)
+    reason = models.CharField(max_length=255, blank=True, default='')
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='schedule_blocks',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "schedule_blocks"
+        ordering = ['start_datetime']
+
+    def clean(self):
+        super().clean()
+        if self.end_datetime and self.start_datetime and self.end_datetime <= self.start_datetime:
+            raise ValidationError({'end_datetime': 'End datetime must be after start datetime.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"ScheduleBlock from {self.start_datetime} to {self.end_datetime} ({self.reason})"

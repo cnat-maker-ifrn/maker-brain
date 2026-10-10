@@ -24,6 +24,7 @@ export const endpoints = {
     busySlots: (date) => `/makerapp/visits/busy-slots/?date=${date}`,
     accept: (id) => `/makerapp/visits/${id}/accept/`,
     reject: (id) => `/makerapp/visits/${id}/reject/`,
+    close: (id) => `/makerapp/visits/${id}/close/`,
   },
   schools: {
     list: '/makerapp/schools/',
@@ -51,4 +52,10 @@ export const endpoints = {
       return qs ? `/makerapp/reports/pdf/?${qs}` : '/makerapp/reports/pdf/';
     },
   },
-};
+  scheduleBlocks: {
+    list: '/makerapp/schedule-blocks/',
+    create: '/makerapp/schedule-blocks/',
+    delete: (id) => `/makerapp/schedule-blocks/${id}/`,
+    bulkDelete: '/makerapp/schedule-blocks/bulk-delete/',
+  },
+};

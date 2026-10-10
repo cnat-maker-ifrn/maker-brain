@@ -5,6 +5,7 @@ import {
   isSlotAvailable,
   minAllowedStart,
   isBusinessDay,
+  rangesOverlap,
 } from '@/frontLib/visitAvailability';
 
 const DAYS_TO_SHOW = 10;
@@ -43,6 +44,18 @@ export function SlotPicker({ visitType, value, onChange }) {
     [selectedDate, visitType]
   );
 
+  const blockReason = useMemo(() => {
+    return busySlots.find((b) => b.reason)?.reason;
+  }, [busySlots]);
+
+  const isWholeDayClosed = useMemo(() => {
+    return busySlots.some((b) => b.all_day);
+  }, [busySlots]);
+
+  const isAllSlotsUnavailable = useMemo(() => {
+    return !isLoading && slots.length > 0 && slots.every((slot) => !isSlotAvailable(slot, busySlots, minStart));
+  }, [isLoading, slots, busySlots, minStart]);
+
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -78,12 +91,25 @@ export function SlotPicker({ visitType, value, onChange }) {
               const available = isSlotAvailable(slot, busySlots, minStart);
               const isSelected = value?.getTime() === slot.start.getTime();
 
+              const overlappingBlock = !available
+                ? busySlots.find((busy) =>
+                    rangesOverlap(slot.start, slot.end, new Date(busy.start), new Date(busy.end))
+                  )
+                : null;
+
+              const tooltip = overlappingBlock?.reason
+                ? `Indisponível: ${overlappingBlock.reason}`
+                : !available
+                ? 'Horário indisponível'
+                : undefined;
+
               return (
                 <button
                   type="button"
                   key={slot.start.toISOString()}
                   disabled={!available}
                   onClick={() => onChange(slot.start)}
+                  title={tooltip}
                   className={`rounded-md border px-2 py-2 text-xs sm:text-sm font-medium transition-colors ${
                     !available
                       ? 'cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300'
@@ -98,10 +124,22 @@ export function SlotPicker({ visitType, value, onChange }) {
             })}
           </div>
         )}
-        {!isLoading && slots.every((slot) => !isSlotAvailable(slot, busySlots, minStart)) && (
-          <p className="mt-2 text-sm text-gray-500">Nenhum horário disponível nesse dia.</p>
+
+        {isAllSlotsUnavailable && (
+          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs sm:text-sm text-amber-800">
+            <p className="font-semibold">
+              {isWholeDayClosed
+                ? '🔒 Laboratório fechado neste dia.'
+                : 'Nenhum horário disponível nesse dia.'}
+            </p>
+            {blockReason && (
+              <p className="mt-1 text-xs text-amber-700">
+                <strong>Motivo:</strong> {blockReason}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>
   );
-}
+}

@@ -7,6 +7,7 @@ import ProfilePage from '@/pages/ProfilePage';
 import VisitManagementPage from '@/pages/VisitManagementPage';
 import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
 import ReportsPage from '@/pages/ReportsPage';
+import ScheduleBlocksPage from '@/pages/ScheduleBlocksPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
 const VISIT_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
@@ -36,7 +37,9 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute allowedGroups={['Owners']} />}>
         <Route path="/relatorios" element={<ReportsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/schedule-blocks" element={<ScheduleBlocksPage />} />
+        <Route path="/bloqueio-agenda" element={<ScheduleBlocksPage />} />
       </Route>
     </Routes>
   );
-}
+}

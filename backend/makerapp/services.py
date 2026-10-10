@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from makerapp.models import Visit, Service
+from makerapp.models import Visit, Service, ScheduleBlock
 
 VISIT_CONSTRAINTS = {
     'fast':      {'max_duration_minutes': 20, 'max_visitors': 25},
@@ -33,12 +33,23 @@ class VisitService:
     @staticmethod
     def _validate_no_schedule_conflict(scheduling_date, visit_type, exclude_pk=None):
         """
-        Ensures no other non-rejected visit overlaps with the requested time slot,
-        using each visit's own duration (based on its visit_type).
+        Ensures no other non-rejected visit or schedule block (lab closure)
+        overlaps with the requested time slot, using each visit's own duration.
         """
         new_duration = timedelta(minutes=VISIT_CONSTRAINTS[visit_type]['max_duration_minutes'])
         new_start = scheduling_date
         new_end = scheduling_date + new_duration
+
+        conflicting_block = ScheduleBlock.objects.filter(
+            start_datetime__lt=new_end,
+            end_datetime__gt=new_start,
+        ).first()
+
+        if conflicting_block:
+            reason = f": {conflicting_block.reason}" if conflicting_block.reason else "."
+            raise ValidationError(
+                {'scheduling_date': f'The laboratory is unavailable during this time{reason}'}
+            )
 
         same_day_visits = Visit.objects.filter(
             scheduling_date__date=scheduling_date.date()
@@ -57,6 +68,7 @@ class VisitService:
                 raise ValidationError(
                     {'scheduling_date': 'There is already a visit scheduled that overlaps with this time slot.'}
                 )
+
 
     @staticmethod
     def create_visit(requester, validated_data: dict) -> Visit:
@@ -94,14 +106,29 @@ class VisitService:
         if visit.is_visit_closed:
             raise ValidationError({'is_visit_closed': 'This visit is already closed.'})
 
-        required_fields = ['has_visited', 'real_number_of_visitors', 'photo', 'observations']
-        missing = [f for f in required_fields if not validated_data.get(f)]
-        if missing:
-            raise ValidationError({f: 'This field is required to close a visit.' for f in missing})
+        required_fields = ['real_number_of_visitors', 'photo', 'observations', 'description']
+        errors = {}
+        for f in required_fields:
+            val = validated_data.get(f)
+            if val is None or (isinstance(val, str) and not val.strip()):
+                errors[f] = 'This field is required to close a visit.'
+
+        real_visitors = validated_data.get('real_number_of_visitors')
+        if real_visitors is not None:
+            try:
+                num = int(real_visitors)
+                if num <= 0:
+                    errors['real_number_of_visitors'] = 'Real number of visitors must be greater than zero.'
+            except (ValueError, TypeError):
+                errors['real_number_of_visitors'] = 'Real number of visitors must be a valid number.'
+
+        if errors:
+            raise ValidationError(errors)
 
         for attr, value in validated_data.items():
             setattr(visit, attr, value)
 
+        visit.has_visited = validated_data.get('has_visited', True)
         visit.is_visit_closed = True
         visit.save()
         return visit

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from makerapp.models import School, Company, Visit, Service
+from makerapp.models import School, Company, Visit, Service, ScheduleBlock
 
 
 class SchoolSerializer(serializers.ModelSerializer):
@@ -41,6 +41,20 @@ class VisitSerializer(serializers.ModelSerializer):
 
         return data
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and request.user and request.user.is_authenticated:
+            is_staff_or_manager = request.user.groups.filter(
+                name__in=['Owners', 'Managers', 'Scholarship Students']
+            ).exists()
+            if not is_staff_or_manager and instance.is_visit_closed:
+                data['photo'] = None
+                data['observations'] = None
+                data['description'] = None
+                data['real_number_of_visitors'] = None
+        return data
+
 
 class VisitStatusUpdateSerializer(serializers.ModelSerializer):
     """Handles acceptance/rejection of visits by staff."""
@@ -55,7 +69,7 @@ class VisitCloseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Visit
-        fields = ['has_visited', 'real_number_of_visitors', 'photo', 'observations', 'is_visit_closed']
+        fields = ['has_visited', 'real_number_of_visitors', 'photo', 'observations', 'description', 'is_visit_closed']
 
     def validate(self, data):
         if data.get('is_visit_closed') and data.get('real_number_of_visitors') is None:
@@ -67,6 +81,34 @@ class VisitCloseSerializer(serializers.ModelSerializer):
 class BusySlotSerializer(serializers.Serializer):
     start = serializers.DateTimeField()
     end = serializers.DateTimeField()
+    all_day = serializers.BooleanField(required=False, default=False)
+    reason = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+
+
+class ScheduleBlockSerializer(serializers.ModelSerializer):
+    created_by_name = serializers.CharField(source='created_by.name', read_only=True)
+
+    class Meta:
+        model = ScheduleBlock
+        fields = [
+            'id',
+            'start_datetime',
+            'end_datetime',
+            'all_day',
+            'reason',
+            'created_by',
+            'created_by_name',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_by', 'created_by_name', 'created_at']
+
+    def validate(self, data):
+        start = data.get('start_datetime', getattr(self.instance, 'start_datetime', None))
+        end = data.get('end_datetime', getattr(self.instance, 'end_datetime', None))
+        if start and end and end <= start:
+            raise serializers.ValidationError({'end_datetime': 'End datetime must be after start datetime.'})
+        return data
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     requester_name = serializers.CharField(source='requester.name', read_only=True)
@@ -74,4 +116,4 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
-        read_only_fields = ['requester']
+        read_only_fields = ['requester']

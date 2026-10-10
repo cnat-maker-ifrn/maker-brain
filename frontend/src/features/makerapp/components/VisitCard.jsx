@@ -1,8 +1,12 @@
+import { useAuth } from '@/context/AuthContext';
+
 const VISIT_TYPE_LABELS = {
   fast: 'Rápida',
   childish: 'Infantil',
   technical: 'Técnica',
 };
+
+const VISIT_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
 
 function getVisitStatus(visit) {
   if (visit.is_visit_closed) {
@@ -40,9 +44,20 @@ function formatSchedulingDate(isoDate) {
   });
 }
 
-export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'list', className = '' }) {
+export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessing, layout = 'list', className = '' }) {
+  const { user } = useAuth();
+  const isPrivilegedUser = Boolean(user?.groups?.some((g) => VISIT_MANAGER_GROUPS.includes(g)));
+
   const showActions = (onAccept || onReject) && visit.acceptance_status === 'pending';
+  const canClose = Boolean(onCloseVisit && visit.acceptance_status === 'accepted' && !visit.is_visit_closed && isPrivilegedUser);
   const status = getVisitStatus(visit);
+
+  // Detalhamento do card pós-fechamento (foto, descrição, observação e visitantes reais)
+  // deve aparecer apenas para managers, owners e scholarship students.
+  const showRealVisitors = visit.is_visit_closed && isPrivilegedUser && visit.real_number_of_visitors !== null && visit.real_number_of_visitors !== undefined;
+  const showDescription = visit.description && (!visit.is_visit_closed || isPrivilegedUser);
+  const showObservations = isPrivilegedUser && Boolean(visit.observations);
+  const showPhoto = isPrivilegedUser && Boolean(visit.photo);
 
   if (layout === 'carousel') {
     return (
@@ -78,7 +93,7 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'l
             <span>
               Previstos: <span className="font-semibold text-gray-700">{visit.forecast_number_of_visitors}</span>
             </span>
-            {visit.is_visit_closed && visit.real_number_of_visitors !== null && visit.real_number_of_visitors !== undefined && (
+            {showRealVisitors && (
               <span>
                 Reais: <span className="font-semibold text-forest-700">{visit.real_number_of_visitors}</span>
               </span>
@@ -94,10 +109,29 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'l
             )}
           </div>
 
-          {visit.description && (
+          {showDescription && (
             <p className="text-xs text-gray-600 line-clamp-3 break-words pt-0.5">
               {visit.description}
             </p>
+          )}
+
+          {showObservations && (
+            <p className="text-xs text-gray-600 line-clamp-2 break-words pt-0.5">
+              <span className="font-medium text-gray-700">Observações:</span> {visit.observations}
+            </p>
+          )}
+
+          {showPhoto && (
+            <div className="pt-0.5">
+              <a
+                href={visit.photo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-forest-600 hover:text-forest-700 hover:underline"
+              >
+                <span>📷</span> Ver foto da visita
+              </a>
+            </div>
           )}
         </div>
 
@@ -121,6 +155,17 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'l
                 Rejeitar
               </button>
             )}
+          </div>
+        ) : canClose ? (
+          <div className="flex items-center gap-2 pt-3 mt-3 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={() => onCloseVisit(visit)}
+              disabled={isProcessing}
+              className="w-full px-3 py-1.5 rounded-md bg-forest-600 text-white text-xs font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors text-center"
+            >
+              Fechar visita
+            </button>
           </div>
         ) : null}
       </div>
@@ -154,7 +199,7 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'l
           <span>
             Visitantes previstos: <span className="font-semibold text-gray-700">{visit.forecast_number_of_visitors}</span>
           </span>
-          {visit.is_visit_closed && visit.real_number_of_visitors !== null && visit.real_number_of_visitors !== undefined && (
+          {showRealVisitors && (
             <span>
               Visitantes reais: <span className="font-semibold text-forest-700">{visit.real_number_of_visitors}</span>
             </span>
@@ -170,10 +215,29 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'l
           )}
         </div>
 
-        {visit.description && (
+        {showDescription && (
           <p className="text-xs text-gray-600 pt-1 line-clamp-2 break-words">
             {visit.description}
           </p>
+        )}
+
+        {showObservations && (
+          <p className="text-xs text-gray-600 pt-0.5 line-clamp-2 break-words">
+            <span className="font-medium text-gray-700">Observações:</span> {visit.observations}
+          </p>
+        )}
+
+        {showPhoto && (
+          <div className="pt-0.5">
+            <a
+              href={visit.photo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-medium text-forest-600 hover:text-forest-700 hover:underline"
+            >
+              <span>📷</span> Ver foto da visita
+            </a>
+          </div>
         )}
       </div>
 
@@ -204,6 +268,17 @@ export function VisitCard({ visit, onAccept, onReject, isProcessing, layout = 'l
                 Rejeitar
               </button>
             ) : null}
+          </div>
+        ) : canClose ? (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onCloseVisit(visit)}
+              disabled={isProcessing}
+              className="px-3.5 py-1.5 rounded-md bg-forest-600 text-white text-xs sm:text-sm font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors"
+            >
+              Fechar visita
+            </button>
           </div>
         ) : null}
       </div>

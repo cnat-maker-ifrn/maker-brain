@@ -4,11 +4,13 @@ export { schoolService } from './services/schoolService';
 export { companyService } from './services/companyService';
 export { serviceService } from './services/serviceService';
 export { reportService } from './services/reportService';
+export { scheduleBlockService } from './services/scheduleBlockService';
 
 // components
 export { CreateVisitButton } from './components/CreateVisitButton';
 export { CreateVisitModal } from './components/CreateVisitModal';
 export { CreateVisitForm } from './components/CreateVisitForm';
+export { CloseVisitModal } from './components/CloseVisitModal';
 export { SlotPicker } from './components/SlotPicker';
 export { VisitCard } from './components/VisitCard';
 export { CreateServiceButton } from './components/CreateServiceButton';
@@ -20,6 +22,8 @@ export { DirectoratesPieChart } from './components/report/DirectoratesPieChart';
 export { StudentProfileCard } from './components/report/StudentProfileCard';
 export { SchoolsTable } from './components/report/SchoolsTable';
 export { CompaniesTable } from './components/report/CompaniesTable';
+export { CreateScheduleBlockModal } from './components/CreateScheduleBlockModal';
+export { ScheduleBlockCard } from './components/ScheduleBlockCard';
 
 // hooks
 export { useCreateVisit } from './hooks/useCreateVisit';
@@ -29,3 +33,4 @@ export { useMyServices } from './hooks/useMyServices';
 export { useVisitManagement } from './hooks/useVisitManagement';
 export { useCreateService } from './hooks/useCreateService';
 export { useReport } from './hooks/useReport';
+export { useScheduleBlocks } from './hooks/useScheduleBlocks';

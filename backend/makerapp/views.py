@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 from drf_yasg.utils import swagger_auto_schema, no_body
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
-from makerapp.models import School, Company, Visit, Service
+from makerapp.models import School, Company, Visit, Service, ScheduleBlock
 from makerapp.serializers import (
     SchoolSerializer,
     CompanySerializer,
@@ -15,11 +16,13 @@ from makerapp.serializers import (
     VisitStatusUpdateSerializer,
     VisitCloseSerializer,
     BusySlotSerializer,
-    ServiceSerializer
+    ServiceSerializer,
+    ScheduleBlockSerializer,
 )
 from makerapp.services import VisitService, VISIT_CONSTRAINTS, ServiceService
 from makerapp.report_service import ReportService
 from makerauth.permissions import IsOwner, IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS, MANAGER_GROUPS
+
 
 
 class SchoolViewSet(ModelViewSet):
@@ -94,7 +97,7 @@ class VisitViewSet(ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def mine(self, request):
-        serializer = VisitSerializer(self.get_queryset(), many=True)
+        serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -172,20 +175,20 @@ class VisitViewSet(ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['patch', 'post'])
     def close(self, request, pk=None):
         visit = self.get_object()
         serializer = self.get_serializer(visit, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
         try:
-            VisitService.close_visit(visit, serializer.validated_data)
+            closed_visit = VisitService.close_visit(visit, serializer.validated_data)
         except ValidationError as exc:
             return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(VisitSerializer(closed_visit).data, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], url_path='busy-slots')
     def busy_slots(self, request):
         date_param = request.query_params.get('date')
         if not date_param:
@@ -210,11 +213,34 @@ class VisitViewSet(ModelViewSet):
                 'end': visit.scheduling_date + timedelta(
                     minutes=VISIT_CONSTRAINTS[visit.visit_type]['max_duration_minutes']
                 ),
+                'all_day': False,
+                'reason': None,
             }
             for visit in visits
         ]
 
+        # Add schedule blocks (lab closures) that overlap target date
+        day_start = timezone.make_aware(datetime.combine(target_date, datetime.min.time()))
+        day_end = timezone.make_aware(datetime.combine(target_date, datetime.max.time().replace(microsecond=0)))
+
+        day_start_padded = day_start - timedelta(hours=14)
+        day_end_padded = day_end + timedelta(hours=14)
+
+        blocks = ScheduleBlock.objects.filter(
+            start_datetime__lt=day_end_padded,
+            end_datetime__gt=day_start_padded,
+        )
+
+        for block in blocks:
+            slots.append({
+                'start': block.start_datetime,
+                'end': block.end_datetime,
+                'all_day': block.all_day,
+                'reason': block.reason,
+            })
+
         return Response(BusySlotSerializer(slots, many=True).data)
+
 
 class ServiceViewSet(ModelViewSet):
     serializer_class = ServiceSerializer
@@ -323,4 +349,106 @@ class ReportViewSet(ViewSet):
 
         response = HttpResponse(pdf_bytes, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        return response
+        return response
+
+
+class ScheduleBlockViewSet(ModelViewSet):
+    queryset = ScheduleBlock.objects.all().order_by('start_datetime')
+    serializer_class = ScheduleBlockSerializer
+    permission_classes = [IsOwner]
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        # Support batch list creation: [ {...}, {...} ]
+        if isinstance(request.data, list):
+            created_blocks = []
+            for item in request.data:
+                serializer = self.get_serializer(data=item)
+                serializer.is_valid(raise_exception=True)
+                block = serializer.save(created_by=request.user)
+                created_blocks.append(block)
+            return Response(
+                self.get_serializer(created_blocks, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        # Support batch date range or list of dates
+        if isinstance(request.data, dict) and ('dates' in request.data or ('start_date' in request.data and 'end_date' in request.data)):
+            data = request.data
+            all_day = data.get('all_day', True)
+            start_time_str = data.get('start_time')
+            end_time_str = data.get('end_time')
+            reason = data.get('reason', '')
+
+            dates = []
+            if 'start_date' in data and 'end_date' in data:
+                try:
+                    start_d = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
+                    end_d = datetime.strptime(data['end_date'], '%Y-%m-%d').date()
+                except ValueError:
+                    return Response({'detail': 'Invalid date format, use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+                if end_d < start_d:
+                    return Response({'detail': 'End date must be on or after start date.'}, status=status.HTTP_400_BAD_REQUEST)
+                curr = start_d
+                while curr <= end_d:
+                    dates.append(curr)
+                    curr += timedelta(days=1)
+            elif 'dates' in data:
+                raw_dates = data.get('dates', [])
+                if not raw_dates:
+                    return Response({'detail': 'dates list cannot be empty.'}, status=status.HTTP_400_BAD_REQUEST)
+                for d_str in raw_dates:
+                    try:
+                        d = datetime.strptime(d_str, '%Y-%m-%d').date() if isinstance(d_str, str) else d_str
+                        dates.append(d)
+                    except ValueError:
+                        return Response({'detail': f'Invalid date format: {d_str}'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not all_day:
+                if not start_time_str or not end_time_str:
+                    return Response({'detail': 'start_time and end_time are required when all_day is False.'}, status=status.HTTP_400_BAD_REQUEST)
+                try:
+                    start_t = datetime.strptime(start_time_str, '%H:%M').time()
+                    end_t = datetime.strptime(end_time_str, '%H:%M').time()
+                except ValueError:
+                    return Response({'detail': 'Invalid time format, use HH:MM.'}, status=status.HTTP_400_BAD_REQUEST)
+                if end_t <= start_t:
+                    return Response({'detail': 'end_time must be after start_time.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            created_blocks = []
+            for d in dates:
+                if all_day:
+                    start_dt = timezone.make_aware(datetime.combine(d, datetime.min.time()))
+                    end_dt = timezone.make_aware(datetime.combine(d, datetime.max.time().replace(microsecond=0)))
+                else:
+                    start_dt = timezone.make_aware(datetime.combine(d, start_t))
+                    end_dt = timezone.make_aware(datetime.combine(d, end_t))
+
+                block = ScheduleBlock.objects.create(
+                    start_datetime=start_dt,
+                    end_datetime=end_dt,
+                    all_day=all_day,
+                    reason=reason,
+                    created_by=request.user,
+                )
+                created_blocks.append(block)
+
+            return Response(
+                self.get_serializer(created_blocks, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=['post'], url_path='bulk-delete')
+    def bulk_delete(self, request):
+        ids = request.data.get('ids', [])
+        if not isinstance(ids, list):
+            return Response({'detail': 'ids must be a list.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        deleted_count, _ = ScheduleBlock.objects.filter(id__in=ids).delete()
+        return Response({'deleted': deleted_count}, status=status.HTTP_200_OK)
+
