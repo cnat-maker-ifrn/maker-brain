@@ -2,7 +2,8 @@
 
 | Data | Versão | Descrição | Autores |
 | :--: | :----: | :-------: | :-----: |
-| 05/09 /2026 | 1.0 | Versão inicial | Lucas Tales |
+| 05/09/2026 | 1.0 | Versão inicial | Lucas Tales |
+| 04/10/2026 | 1.1 | Reestruturação dos Requisitos de Qualidade (ISO/IEC 25010), definição de métricas/operacionalização e detalhamento das restrições do sistema | Lucas Tales |
 
 ## 1. Introdução
 
@@ -59,7 +60,7 @@ De forma geral, serão consideradas as seguintes partes:
 
 ## 3. Requisitos do sistema
 
-### 3.1
+### 3.1 Componentes do sistema
 
 |Componente|Requisito|
 |:--|:--|
@@ -83,21 +84,23 @@ De forma geral, serão consideradas as seguintes partes:
 |RF09|O sistema deve permitir gerenciar o cadastro de bolsistas|
 |RF10|O sistema deve possuir login|
 
-### 3.3 Requisitos de qualidade
+### 3.3 Requisitos de qualidade (Requisitos Não Funcionais)
 
-|Requisito|Descrição|
-|:--|:--|
-|RQ01|O sistema deverá carregar as páginas em até 3 segundos|
-|RQ02|O sistema deverá apresentar uma disponibilidade mínima de 95% durante cada mês, exceto durante períodos de manutenção previamente programados|
-|RQ03|O sistema deverá permitir que um usuário realize um agendamento de visita sem necessidade de treinamento prévio, utilizando uma interface com campos e opções claramente identificados|
+| ID | Característica / Subcaracterística | Descrição do Requisito de Qualidade | Tipo de Medição | Métrica / Critério de Aceitação |
+|:---|:---|:---|:---|:---|
+| **RQ01** | **Eficiência de Desempenho**<br>*(Comportamento temporal)* | As requisições HTTP da API REST devem responder em até 1,5 segundo sob carga típica | Quantitativa | Tempo de resposta da API <= 1500ms |
+| **RQ02** | **Eficiência de Desempenho**<br>*(Capacidade)* | O sistema deve suportar no mínimo 50 usuários simultâneos executando consultas na grade de agendamentos e submissões sem degradação do serviço ou aumento significativo na taxa de erros | Quantitativa | Taxa de erros HTTP (status 5xx) < 1%<br> Throughput estável suportando pelo menos 50 conexões concorrentes sustentadas |
+| **RQ03** | **Usabilidade**<br>*(Facilidade de Aprendizado)* | Um novo solicitante deve ser capaz de realizar o agendamento de uma visita ou solicitar um serviço de forma autônoma em sua primeira utilização, sem necessidade de treinamento formal prévio. | Mista (Quantitativa e Qualitativa) | Tempo médio para completar a solicitação < 3 minutos |
+| **RQ04** | **Segurança**<br>*(Controle de acesso)* | O sistema deve implementar controle de acesso baseado em papéis (RBAC - *Role-Based Access Control*), garantindo que apenas usuários autorizados executem operações de gestão e avaliação, bloqueando acessos indevidos por solicitantes a dados de terceiros | Qualitativa | 100% dos endpoints administrativos protegidos com verificação de perfil, retornando HTTP 403 Forbidden para requisições não autorizadas |
 
 ### 3.4 Restrições
 
-|Restrição|Descrição|
-|:--|:--|
-|R01|O banco de dados será PostgreSQL|
-|R02|O backend será feito com Django REST Framework|
-|R03|O frontend será feito com Vite, React e TailwindCSS|
+| ID | Categoria | Requisito |
+|----|-----------|-----------|
+| **R01** | Tecnologia do Backend | O backend deve ser desenvolvido em **Python** (versão 3.14 ou superior), utilizando o framework **Django** (versão 6.0 ou superior) e a biblioteca **Django REST Framework (DRF)** para a criação dos serviços da API REST |
+| **R02** | Tecnologia do Frontend | O frontend deve ser desenvolvido como uma *Single Page Application* (SPA) utilizando **React** (versão 19 ou superior), ferramenta de build **Vite**, biblioteca **React Router** para roteamento e **Tailwind CSS** (versão 4 ou superior) para estilização dos componentes visuais |
+| **R03** | Sistema Gerenciador de Banco de Dados | O SGBD para os ambientes de produção e homologação deve ser obrigatoriamente o **PostgreSQL** (versão 18 ou superior), operando via conector `psycopg2-binary`. O uso do SQLite é restrito exclusivamente ao ambiente de desenvolvimento local |
+| **R04** | Formato de Troca de Dados | A comunicação entre frontend e backend deve ser realizada via chamadas HTTP REST, trafegando dados exclusivamente serializados em **JSON**, ressalvadas as rotas específicas para envio de anexos de projetos maker (*multipart/form-data*) |
 
 ### 3.5 Interfaces
 
@@ -113,4 +116,5 @@ De forma geral, serão consideradas as seguintes partes:
 
 ## Referências
 
-Certified Professional for Requirements Engineering
+- ISO/IEC 25010
+- IREB — *Certified Professional for Requirements Engineering (CPRE) — Foundation Level*.
