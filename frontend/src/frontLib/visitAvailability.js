@@ -42,9 +42,10 @@ export function generateDaySlots(date, visitType) {
   return slots;
 }
 
-function rangesOverlap(aStart, aEnd, bStart, bEnd) {
+export function rangesOverlap(aStart, aEnd, bStart, bEnd) {
   return aStart < bEnd && bStart < aEnd;
 }
+
 
 export function isSlotAvailable(slot, busySlots, minStart = minAllowedStart()) {
   if (slot.start < minStart) return false;

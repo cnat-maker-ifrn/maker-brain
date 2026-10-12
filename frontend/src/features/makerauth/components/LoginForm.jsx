@@ -27,8 +27,8 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          className="bg-white border border-gray-200 rounded-md px-3 py-2.5
-                     text-gray-900 placeholder:text-gray-400
+          className="bg-white border border-gray-200 rounded-md px-3.5 py-2.5
+                     text-base sm:text-sm text-gray-900 placeholder:text-gray-400
                      focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500
                      transition-colors"
           placeholder="voce@ifrn.edu.br"
@@ -52,8 +52,8 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          className="bg-white border border-gray-200 rounded-md px-3 py-2.5
-                     text-gray-900 placeholder:text-gray-400
+          className="bg-white border border-gray-200 rounded-md px-3.5 py-2.5
+                     text-base sm:text-sm text-gray-900 placeholder:text-gray-400
                      focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500
                      transition-colors"
           placeholder="••••••••"
@@ -70,7 +70,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="mt-1 bg-forest-600 hover:bg-forest-500 disabled:bg-forest-600/40
+        className="mt-1 min-h-[44px] bg-forest-600 hover:bg-forest-500 disabled:bg-forest-600/40
                    disabled:cursor-not-allowed text-white font-semibold
                    rounded-md py-2.5 transition-colors"
       >

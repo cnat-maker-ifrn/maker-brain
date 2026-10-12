@@ -49,5 +49,21 @@ export function useVisitManagement() {
     }
   };
 
-  return { visits, isLoading, error, processingId, accept, reject, refetch: fetchVisits };
+  const closeVisit = async (id, data) => {
+    setProcessingId(id);
+    setError(null);
+    try {
+      await visitService.close(id, data);
+      await fetchVisits();
+      return true;
+    } catch (err) {
+      const serverErr = extractServerErrors(err);
+      setError(serverErr);
+      throw serverErr;
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  return { visits, isLoading, error, processingId, accept, reject, closeVisit, refetch: fetchVisits };
 }

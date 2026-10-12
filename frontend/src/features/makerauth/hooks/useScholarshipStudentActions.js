@@ -32,5 +32,50 @@ export function useScholarshipStudentActions(onActionComplete) {
     }
   };
 
-  return { accept, reject, processingId, error };
+  const promote = async (id) => {
+    setProcessingId(id);
+    setError(null);
+    try {
+      await scholarshipStudentService.promote(id);
+      onActionComplete?.();
+    } catch (err) {
+      const serverErr = extractServerErrors(err);
+      setError(serverErr);
+      throw err;
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const removeManager = async (id) => {
+    setProcessingId(id);
+    setError(null);
+    try {
+      await scholarshipStudentService.removeManager(id);
+      onActionComplete?.();
+    } catch (err) {
+      const serverErr = extractServerErrors(err);
+      setError(serverErr);
+      throw err;
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const demoteToRequester = async (id) => {
+    setProcessingId(id);
+    setError(null);
+    try {
+      await scholarshipStudentService.demoteToRequester(id);
+      onActionComplete?.();
+    } catch (err) {
+      const serverErr = extractServerErrors(err);
+      setError(serverErr);
+      throw err;
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  return { accept, reject, promote, removeManager, demoteToRequester, processingId, error, setError };
 }

@@ -6,7 +6,7 @@ export function Input({ label, id, error, hint, className = '', ...props }) {
       </label>
       <input
         id={id}
-        className={`w-full rounded-md border bg-white px-3.5 py-2.5 text-gray-900
+        className={`w-full rounded-md border bg-white px-3.5 py-2.5 text-base sm:text-sm text-gray-900
           placeholder:text-gray-400 outline-none transition-colors
           focus:border-forest-500 focus:ring-1 focus:ring-forest-500/40
           ${error ? 'border-danger-500/70' : 'border-gray-200'} ${className}`}

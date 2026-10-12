@@ -3,6 +3,7 @@ from django.urls import path, include
 from .views import (
     RequesterViewSet,
     ScholarshipStudentViewSet,
+    ManagerViewSet,
     CustomTokenObtainPairView,
     CurrentUserView,
 )
@@ -12,6 +13,7 @@ router = DefaultRouter()
 
 router.register(r'requesters', RequesterViewSet, basename='requesters')
 router.register(r'scholarship-students', ScholarshipStudentViewSet, basename='scholarship-students')
+router.register(r'managers', ManagerViewSet, basename='managers')
 
 urlpatterns = [
     path('', include(router.urls)),
