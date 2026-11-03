@@ -105,6 +105,7 @@ class Service(models.Model):
     description = models.TextField()
     quantity = models.IntegerField()
     acceptance_status = models.CharField(max_length=8, choices=ACCEPTANCE_STATUS_CHOICES, default='pending')
+    is_completed = models.BooleanField(default=False)
     requester = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
