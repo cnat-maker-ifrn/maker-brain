@@ -2,9 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterRequesterPage } from '@/pages/RegisterRequesterPage';
 import { RegisterScholarshipStudentPage } from '@/pages/RegisterScholarshipStudentPage';
 import { LoginPage } from '@/pages/LoginPage';
+import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProfilePage from '@/pages/ProfilePage';
 import VisitManagementPage from '@/pages/VisitManagementPage';
+import ServiceManagementPage from '@/pages/ServiceManagementPage';
 import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduleBlocksPage from '@/pages/ScheduleBlocksPage';
@@ -27,6 +30,7 @@ export function AppRoutes() {
 
       <Route element={<ProtectedRoute allowedGroups={VISIT_MANAGER_GROUPS} />}>
         <Route path="/visits" element={<VisitManagementPage />} />
+        <Route path="/services" element={<ServiceManagementPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedGroups={['Owners', 'Managers']} />}>
@@ -42,4 +46,4 @@ export function AppRoutes() {
       </Route>
     </Routes>
   );
-}
+}

@@ -3,6 +3,8 @@ import { useUserProfile, EditProfileModal } from '@/features/makerauth';
 import {
   useMyVisits,
   useMyServices,
+  visitService,
+  serviceService,
   VisitCard,
   ServiceCard,
   CreateVisitButton,
@@ -42,7 +44,7 @@ function formatPhone(phone) {
 
 function getItemStatusKey(item, isService = false) {
   if (isService) {
-    if (item.is_closed || item.acceptance_status === 'closed') return 'fechado';
+    if (item.is_completed || item.is_closed || item.acceptance_status === 'closed') return 'fechado';
     if (item.acceptance_status === 'accepted') return 'em_andamento';
     if (item.acceptance_status === 'rejected') return 'recusado';
     return 'aguardando_avaliacao';
@@ -77,6 +79,24 @@ export default function ProfilePage() {
   const handleCreated = () => {
     refetchVisits();
     refetchServices();
+  };
+
+  const handleCancelVisit = async (id) => {
+    try {
+      await visitService.delete(id);
+      refetchVisits();
+    } catch (err) {
+      alert(err?.response?.data?.detail || 'Erro ao cancelar visita.');
+    }
+  };
+
+  const handleCancelService = async (id) => {
+    try {
+      await serviceService.delete(id);
+      refetchServices();
+    } catch (err) {
+      alert(err?.response?.data?.detail || 'Erro ao cancelar serviço.');
+    }
   };
 
   const displayName = profile?.name || profile?.email || 'Usuário';
@@ -385,7 +405,7 @@ export default function ProfilePage() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {filteredVisits.map((visit) => (
-                    <VisitCard key={visit.id} visit={visit} />
+                    <VisitCard key={visit.id} visit={visit} onCancel={handleCancelVisit} />
                   ))}
                 </div>
               )}
@@ -412,7 +432,7 @@ export default function ProfilePage() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {filteredServices.map((service) => (
-                    <ServiceCard key={service.id} service={service} />
+                    <ServiceCard key={service.id} service={service} onCancel={handleCancelService} />
                   ))}
                 </div>
               )}

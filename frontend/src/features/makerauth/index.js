@@ -18,4 +18,3 @@ export { usePendingScholarshipStudents } from './hooks/usePendingScholarshipStud
 export { useScholarshipStudents } from './hooks/useScholarshipStudents';
 export { useScholarshipStudentActions } from './hooks/useScholarshipStudentActions';
 export { useUserProfile } from './hooks/useUserProfile';
-

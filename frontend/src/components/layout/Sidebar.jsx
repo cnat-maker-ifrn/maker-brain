@@ -5,6 +5,7 @@ import logo from '@/assets/logo.png';
 const OWNER_GROUPS = ['Owners'];
 const MANAGER_GROUPS = ['Owners', 'Managers'];
 const VISIT_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
+const SERVICE_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
 
 const linkClassName = ({ isActive }) =>
   `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -18,6 +19,7 @@ export function Sidebar({ isOpen, onClose }) {
   const isOwner = user?.groups?.some((g) => OWNER_GROUPS.includes(g));
   const isManager = user?.groups?.some((g) => MANAGER_GROUPS.includes(g));
   const canManageVisits = user?.groups?.some((g) => VISIT_MANAGER_GROUPS.includes(g));
+  const canManageServices = user?.groups?.some((g) => SERVICE_MANAGER_GROUPS.includes(g));
 
   const handleLinkClick = () => {
     if (onClose) onClose();
@@ -45,6 +47,15 @@ export function Sidebar({ isOpen, onClose }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <span>Gerenciamento de visitas</span>
+        </NavLink>
+      )}
+
+      {canManageServices && (
+        <NavLink to="/services" onClick={handleLinkClick} className={linkClassName}>
+          <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <span>Gerenciamento de serviços</span>
         </NavLink>
       )}
 

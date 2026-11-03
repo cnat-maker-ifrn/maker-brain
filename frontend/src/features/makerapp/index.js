@@ -33,4 +33,5 @@ export { useMyServices } from './hooks/useMyServices';
 export { useVisitManagement } from './hooks/useVisitManagement';
 export { useCreateService } from './hooks/useCreateService';
 export { useReport } from './hooks/useReport';
-export { useScheduleBlocks } from './hooks/useScheduleBlocks';
+export { useScheduleBlocks } from './hooks/useScheduleBlocks';
+export { useServiceManagement } from './hooks/useServiceManagement';

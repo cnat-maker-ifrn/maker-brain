@@ -19,4 +19,9 @@ export const serviceService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   listMine: () => apiClient.get(endpoints.services.mine),
+  listAll: () => apiClient.get(endpoints.services.list),
+  accept: (id) => apiClient.post(endpoints.services.accept(id)),
+  reject: (id) => apiClient.post(endpoints.services.reject(id)),
+  complete: (id) => apiClient.post(endpoints.services.complete(id)),
+  delete: (id) => apiClient.delete(endpoints.services.delete(id)),
 };

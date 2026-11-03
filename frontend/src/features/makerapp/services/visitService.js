@@ -24,4 +24,5 @@ export const visitService = {
   },
   create: (data) => apiClient.post(endpoints.visits.create, data),
   getBusySlots: (date) => apiClient.get(endpoints.visits.busySlots(date)),
+  delete: (id) => apiClient.delete(endpoints.visits.delete(id)),
 };
