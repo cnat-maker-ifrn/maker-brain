@@ -2,8 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { RegisterRequesterPage } from '@/pages/RegisterRequesterPage';
 import { RegisterScholarshipStudentPage } from '@/pages/RegisterScholarshipStudentPage';
 import { LoginPage } from '@/pages/LoginPage';
-import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
-import { ResetPasswordPage } from '@/pages/ResetPasswordPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProfilePage from '@/pages/ProfilePage';
 import VisitManagementPage from '@/pages/VisitManagementPage';
