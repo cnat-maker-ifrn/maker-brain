@@ -1,7 +1,7 @@
 name: Análise de requisitos
 on:
 push:
-paths: ["docs/hu/**.md"]
+paths: ["docs/requisitos/**.md"]
 workflow_dispatch:
 jobs:
 analisar:
@@ -14,7 +14,7 @@ id: analise
 uses: gabysmm/automatizacao-de-analise-de-requisitos-action@v2.1.0
 with:
 api-key: ${{ secrets.LLM_API_KEY }}
-pasta-hus: docs/requisitos
+pasta-hus: docs/hu
 
 - if: always()
 
