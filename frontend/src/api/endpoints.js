@@ -11,11 +11,13 @@ export const endpoints = {
     list: '/makerauth/scholarship-students/',
     register: '/makerauth/scholarship-students/',
     pending: '/makerauth/scholarship-students/pending/',
+    demoted: '/makerauth/scholarship-students/demoted/',
     accept: (id) => `/makerauth/scholarship-students/${id}/accept/`,
     reject: (id) => `/makerauth/scholarship-students/${id}/reject/`,
     promote: (id) => `/makerauth/scholarship-students/${id}/promote/`,
     removeManager: (id) => `/makerauth/scholarship-students/${id}/remove-manager/`,
     demoteToRequester: (id) => `/makerauth/scholarship-students/${id}/demote-to-requester/`,
+    repromote: (id) => `/makerauth/scholarship-students/${id}/repromote/`,
   },
   visits: {
     create: '/makerapp/visits/',

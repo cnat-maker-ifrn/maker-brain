@@ -69,6 +69,8 @@ class ScholarshipStudentViewSet(ModelViewSet):
             return User.objects.filter(is_active=False)
         if self.action in ['remove_manager', 'demote_manager']:
             return User.objects.filter(groups__name__in=["Scholarship Students", "Managers"], is_active=True).distinct()
+        if self.action in ['repromote', 'repromote_to_scholarship_student']:
+            return User.objects.filter(is_active=True)
         
         return User.objects.filter(groups__name="Scholarship Students", is_active=True)
 
@@ -90,6 +92,9 @@ class ScholarshipStudentViewSet(ModelViewSet):
 
         if self.action in ['demote_to_requester', 'demote']:
             return RequesterDetailSerializer
+
+        if self.action in ['repromote', 'repromote_to_scholarship_student']:
+            return ScholarshipStudentDetailSerializer
 
         return ScholarshipStudentDetailSerializer
         
@@ -119,6 +124,12 @@ class ScholarshipStudentViewSet(ModelViewSet):
             groups__name__in=["Owners", "Managers", "Requesters", "Scholarship Students"]
         ).distinct()
 
+        serializer = ScholarshipStudentListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def demoted(self, request):
+        queryset = User.objects.filter(is_demoted_scholarship_student=True, is_active=True)
         serializer = ScholarshipStudentListSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -167,6 +178,23 @@ class ScholarshipStudentViewSet(ModelViewSet):
     @action(detail=True, methods=['post', 'delete'], url_path='demote')
     def demote(self, request, pk=None):
         return self.demote_to_requester(request, pk=pk)
+
+    @swagger_auto_schema(methods=['post'], request_body=no_body, responses={200: ScholarshipStudentDetailSerializer})
+    @action(detail=True, methods=['post'], url_path='repromote')
+    def repromote(self, request, pk=None):
+        user = self.get_object()
+        if user.groups.filter(name="Scholarship Students").exists():
+            return Response(
+                {"detail": "O usuário já pertence ao grupo Scholarship Students."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        UserService.repromote_to_scholarship_student(user)
+        return Response(ScholarshipStudentDetailSerializer(user).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(methods=['post'], request_body=no_body, responses={200: ScholarshipStudentDetailSerializer})
+    @action(detail=True, methods=['post'], url_path='repromote-to-scholarship-student')
+    def repromote_to_scholarship_student(self, request, pk=None):
+        return self.repromote(request, pk=pk)
     
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
@@ -189,6 +217,8 @@ class ScholarshipStudentViewSet(ModelViewSet):
             'demote_manager',
             'demote_to_requester',
             'demote',
+            'repromote',
+            'repromote_to_scholarship_student',
         ]:
             return [IsOwner()]
 

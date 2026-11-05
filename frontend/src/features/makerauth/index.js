@@ -8,6 +8,7 @@ export { ScholarshipStudentRegisterForm } from './components/ScholarshipStudentR
 export { LoginForm } from './components/LoginForm';
 export { PendingScholarshipStudentCard } from './components/PendingScholarshipStudentCard';
 export { ActiveScholarshipStudentCard } from './components/ActiveScholarshipStudentCard';
+export { DemotedScholarshipStudentCard } from './components/DemotedScholarshipStudentCard';
 export { EditProfileModal } from './components/EditProfileModal';
 
 // hooks
@@ -16,5 +17,6 @@ export { useRegisterScholarshipStudent } from './hooks/useRegisterScholarshipStu
 export { useLogin } from './hooks/useLogin';
 export { usePendingScholarshipStudents } from './hooks/usePendingScholarshipStudents';
 export { useScholarshipStudents } from './hooks/useScholarshipStudents';
+export { useDemotedScholarshipStudents } from './hooks/useDemotedScholarshipStudents';
 export { useScholarshipStudentActions } from './hooks/useScholarshipStudentActions';
 export { useUserProfile } from './hooks/useUserProfile';

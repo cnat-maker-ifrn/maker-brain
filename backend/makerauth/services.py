@@ -13,6 +13,7 @@ class UserService:
     def add_user_in_scholarship_students_group(user):
         group = Group.objects.get(name="Scholarship Students")
         user.is_active = True
+        user.is_demoted_scholarship_student = False
         user.groups.add(group)
         user.save()
 
@@ -59,6 +60,7 @@ class UserService:
 
         user.groups.remove(scholarship_group, manager_group)
         user.groups.add(requester_group)
+        user.is_demoted_scholarship_student = True
         user.save()
 
         return user
@@ -70,3 +72,16 @@ class UserService:
     @staticmethod
     def demote_scholarship_student_to_requester(user):
         return UserService.remove_scholarship_student_to_requester(user)
+
+    @staticmethod
+    def repromote_to_scholarship_student(user):
+        scholarship_group, _ = Group.objects.get_or_create(name="Scholarship Students")
+        requester_group, _ = Group.objects.get_or_create(name="Requesters")
+
+        user.groups.add(scholarship_group)
+        user.groups.remove(requester_group)
+        user.is_demoted_scholarship_student = False
+        user.is_active = True
+        user.save()
+
+        return user
