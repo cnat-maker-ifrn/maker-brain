@@ -81,7 +81,7 @@ export function ActiveScholarshipStudentCard({
                 <button
                   type="button"
                   onClick={async () => {
-                    await onDemoteToRequester(student.id);
+                    await onDemoteToRequester(student);
                     setConfirmDemote(false);
                   }}
                   disabled={isProcessing}

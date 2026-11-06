@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ProfilePage from '@/pages/ProfilePage';
 import VisitManagementPage from '@/pages/VisitManagementPage';
+import ServiceManagementPage from '@/pages/ServiceManagementPage';
 import ScholarshipStudentsApprovalPage from '@/pages/ScholarshipStudentApprovalPage';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduleBlocksPage from '@/pages/ScheduleBlocksPage';
@@ -27,6 +28,7 @@ export function AppRoutes() {
 
       <Route element={<ProtectedRoute allowedGroups={VISIT_MANAGER_GROUPS} />}>
         <Route path="/visits" element={<VisitManagementPage />} />
+        <Route path="/services" element={<ServiceManagementPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedGroups={['Owners', 'Managers']} />}>
@@ -42,4 +44,4 @@ export function AppRoutes() {
       </Route>
     </Routes>
   );
-}
+}

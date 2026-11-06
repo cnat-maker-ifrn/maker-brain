@@ -116,4 +116,13 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = '__all__'
-        read_only_fields = ['requester']
+        read_only_fields = ['requester', 'acceptance_status', 'is_completed']
+
+
+class ServiceStatusUpdateSerializer(serializers.ModelSerializer):
+    """Handles acceptance, rejection or completion of services by staff."""
+
+    class Meta:
+        model = Service
+        fields = ['acceptance_status', 'is_completed']
+

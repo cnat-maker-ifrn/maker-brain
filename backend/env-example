@@ -4,3 +4,13 @@ ALLOWED_HOSTS=
 JWT_SECRET_KEY=
 JWT_ACCESS_TOKEN_LIFETIME=
 JWT_REFRESH_TOKEN_LIFETIME=
+CORS_ALLOWED_ORIGINS=
+
+# --- Initial Owner setup (used by: python manage.py create_owner) ---
+OWNER_CPF=
+OWNER_EMAIL=
+OWNER_NAME=
+OWNER_CELLPHONE=
+OWNER_BOND=
+OWNER_PASSWORD=
+# OWNER_ENROLLMENT=  # required only when OWNER_BOND is student or teacher

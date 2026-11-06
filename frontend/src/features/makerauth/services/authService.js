@@ -24,8 +24,8 @@ export const authService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   
-  login: async ({email, password}) => {
-    const { data } = await apiClient.post(endpoints.auth.login, {email, password});
+  login: async ({ email, password }) => {
+    const { data } = await apiClient.post(endpoints.auth.login, { email, password });
     return data; // {access, refresh}
   },
 
@@ -37,5 +37,9 @@ export const authService = {
   updateProfile: async (payload) => {
     const { data } = await apiClient.patch(endpoints.auth.me, payload);
     return data;
+  },
+
+  deleteAccount: async (password) => {
+    await apiClient.delete(endpoints.auth.me, { data: { password } });
   },
 };

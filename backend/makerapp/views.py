@@ -17,11 +17,20 @@ from makerapp.serializers import (
     VisitCloseSerializer,
     BusySlotSerializer,
     ServiceSerializer,
+    ServiceStatusUpdateSerializer,
     ScheduleBlockSerializer,
 )
 from makerapp.services import VisitService, VISIT_CONSTRAINTS, ServiceService
 from makerapp.report_service import ReportService
-from makerauth.permissions import IsOwner, IsOwnerOrManager, IsVisitManager, VISIT_MANAGER_GROUPS, MANAGER_GROUPS
+from makerauth.permissions import (
+    IsOwner,
+    IsOwnerOrManager,
+    IsVisitManager,
+    IsServiceManager,
+    VISIT_MANAGER_GROUPS,
+    SERVICE_MANAGER_GROUPS,
+    MANAGER_GROUPS,
+)
 
 
 
@@ -63,7 +72,7 @@ class VisitViewSet(ModelViewSet):
         if self.action == 'close':
             return Visit.objects.filter(acceptance_status='accepted', is_visit_closed=False)
 
-        if user.groups.filter(name__in=VISIT_MANAGER_GROUPS).exists():
+        if user.groups.filter(name__in=VISIT_MANAGER_GROUPS).exists() or getattr(user, 'is_superuser', False):
             return Visit.objects.all()
 
         return Visit.objects.filter(requester=user)
@@ -138,15 +147,16 @@ class VisitViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         visit = self.get_object()
+        is_staff = request.user.groups.filter(name__in=VISIT_MANAGER_GROUPS).exists() or getattr(request.user, 'is_superuser', False)
 
-        if visit.acceptance_status != 'pending':
-            return Response(
-                {'detail': 'Only pending visits can be cancelled.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if visit.requester != request.user and not request.user.groups.filter(name__in=['Owners', 'Managers']).exists():
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        if not is_staff:
+            if visit.requester != request.user:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            if visit.acceptance_status != 'pending':
+                return Response(
+                    {'detail': 'Only pending visits can be cancelled.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         visit.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -255,17 +265,29 @@ class ServiceViewSet(ModelViewSet):
         if self.action == 'mine':
             return Service.objects.filter(requester=user)
 
-        if user.groups.filter(name__in=MANAGER_GROUPS).exists():
+        if user.groups.filter(name__in=SERVICE_MANAGER_GROUPS).exists() or getattr(user, 'is_superuser', False):
             return Service.objects.all()
 
         return Service.objects.filter(requester=user)
+
+    def get_serializer_class(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return ServiceSerializer
+
+        if self.action in ['accept', 'reject', 'complete']:
+            return ServiceStatusUpdateSerializer
+
+        return ServiceSerializer
 
     def get_permissions(self):
         if self.action in ['create', 'mine']:
             return [IsAuthenticated()]
 
-        if self.action == 'list':
-            return [IsOwnerOrManager()]
+        if self.action in ['list', 'accept', 'reject', 'complete']:
+            return [IsServiceManager()]
+
+        if self.action in ['update', 'partial_update', 'destroy']:
+            return [IsAuthenticated()]
 
         return [IsAuthenticated()]
 
@@ -293,10 +315,16 @@ class ServiceViewSet(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         service = self.get_object()
-        is_manager = request.user.groups.filter(name__in=MANAGER_GROUPS).exists()
+        is_staff = request.user.groups.filter(name__in=SERVICE_MANAGER_GROUPS).exists() or getattr(request.user, 'is_superuser', False)
 
-        if service.requester != request.user and not is_manager:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        if not is_staff:
+            if service.requester != request.user:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            if service.acceptance_status != 'pending':
+                return Response(
+                    {'detail': 'Only pending services can be edited.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         partial = kwargs.pop('partial', False)
         serializer = self.get_serializer(service, data=request.data, partial=partial)
@@ -307,13 +335,56 @@ class ServiceViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         service = self.get_object()
-        is_manager = request.user.groups.filter(name__in=MANAGER_GROUPS).exists()
+        is_staff = request.user.groups.filter(name__in=SERVICE_MANAGER_GROUPS).exists() or getattr(request.user, 'is_superuser', False)
 
-        if service.requester != request.user and not is_manager:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        if not is_staff:
+            if service.requester != request.user:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            if service.acceptance_status != 'pending':
+                return Response(
+                    {'detail': 'Only pending services can be cancelled.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         service.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @swagger_auto_schema(request_body=no_body)
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+        service = self.get_object()
+
+        try:
+            ServiceService.accept_service(service)
+        except ValidationError as exc:
+            return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(request_body=no_body)
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        service = self.get_object()
+
+        try:
+            ServiceService.reject_service(service)
+        except ValidationError as exc:
+            return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @swagger_auto_schema(methods=['post', 'patch'], request_body=no_body)
+    @action(detail=True, methods=['post', 'patch'])
+    def complete(self, request, pk=None):
+        service = self.get_object()
+
+        try:
+            ServiceService.complete_service(service)
+        except ValidationError as exc:
+            return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(ServiceSerializer(service).data, status=status.HTTP_200_OK)
+
 
 
 class ReportViewSet(ViewSet):

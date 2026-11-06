@@ -143,6 +143,34 @@ class ServiceService:
     @staticmethod
     def create_service(requester, validated_data: dict) -> Service:
         ServiceService._validate_quantity(validated_data['quantity'])
+        validated_data['acceptance_status'] = 'pending'
+        validated_data['is_completed'] = False
 
         service = Service.objects.create(requester=requester, **validated_data)
         return service
+
+    @staticmethod
+    def accept_service(service: Service) -> Service:
+        if service.acceptance_status != 'pending':
+            raise ValidationError({'acceptance_status': 'Only pending services can be accepted.'})
+        service.acceptance_status = 'accepted'
+        service.save()
+        return service
+
+    @staticmethod
+    def reject_service(service: Service) -> Service:
+        if service.acceptance_status != 'pending':
+            raise ValidationError({'acceptance_status': 'Only pending services can be rejected.'})
+        service.acceptance_status = 'rejected'
+        service.save()
+        return service
+
+    @staticmethod
+    def complete_service(service: Service) -> Service:
+        if service.acceptance_status != 'accepted':
+            raise ValidationError({'acceptance_status': 'Only accepted services can be completed.'})
+        if service.is_completed:
+            raise ValidationError({'is_completed': 'This service is already completed.'})
+        service.is_completed = True
+        service.save()
+        return service

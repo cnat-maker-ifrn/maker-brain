@@ -1,14 +1,18 @@
+import { useAuth } from '@/context/AuthContext';
+
 const SERVICE_TYPE_LABELS = {
   '3d_printing': 'Impressão 3D',
   'laser_cutting': 'Corte a Laser',
   'stamping': 'Estampagem',
 };
 
+const SERVICE_MANAGER_GROUPS = ['Owners', 'Managers', 'Scholarship Students'];
+
 function getServiceStatus(service) {
-  if (service.is_closed || service.acceptance_status === 'closed') {
+  if (service.is_completed || service.is_closed || service.acceptance_status === 'closed') {
     return {
-      key: 'fechado',
-      label: 'Fechado',
+      key: 'concluido',
+      label: 'Concluído',
       style: 'bg-slate-100 text-slate-700 border border-slate-200',
     };
   }
@@ -33,7 +37,37 @@ function getServiceStatus(service) {
   };
 }
 
-export function ServiceCard({ service, layout = 'list', className = '' }) {
+export function ServiceCard({
+  service,
+  onAccept,
+  onReject,
+  onComplete,
+  onCancel,
+  isProcessing = false,
+  layout = 'list',
+  className = '',
+}) {
+  const { user } = useAuth();
+  const isPrivilegedUser = Boolean(user?.groups?.some((g) => SERVICE_MANAGER_GROUPS.includes(g)));
+
+  const showActions = (onAccept || onReject) && service.acceptance_status === 'pending';
+  const canComplete = Boolean(
+    onComplete &&
+      service.acceptance_status === 'accepted' &&
+      !service.is_completed &&
+      isPrivilegedUser
+  );
+  const canCancel = Boolean(
+    onCancel &&
+      (isPrivilegedUser || service.acceptance_status === 'pending')
+  );
+
+  const handleCancel = () => {
+    if (window.confirm('Tem certeza de que deseja cancelar esta solicitação de serviço?')) {
+      onCancel(service.id);
+    }
+  };
+
   const status = getServiceStatus(service);
   const typeLabel = SERVICE_TYPE_LABELS[service.name] || service.name;
   const fileName = service.file ? service.file.split('/').pop() : null;
@@ -92,6 +126,51 @@ export function ServiceCard({ service, layout = 'list', className = '' }) {
             )}
           </div>
         </div>
+
+        {(showActions || canComplete || canCancel) && (
+          <div className="flex items-center gap-2 pt-3 mt-3 border-t border-gray-100 flex-wrap">
+            {showActions && onAccept && (
+              <button
+                type="button"
+                onClick={() => onAccept(service.id)}
+                disabled={isProcessing}
+                className="flex-1 px-3 py-1.5 rounded-md bg-forest-600 text-white text-xs font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors text-center"
+              >
+                Aceitar
+              </button>
+            )}
+            {showActions && onReject && (
+              <button
+                type="button"
+                onClick={() => onReject(service.id)}
+                disabled={isProcessing}
+                className="flex-1 px-3 py-1.5 rounded-md border border-danger-500 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs font-medium transition-colors text-center"
+              >
+                Rejeitar
+              </button>
+            )}
+            {canComplete && (
+              <button
+                type="button"
+                onClick={() => onComplete(service.id)}
+                disabled={isProcessing}
+                className="flex-1 px-3 py-1.5 rounded-md bg-forest-600 text-white text-xs font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors text-center"
+              >
+                Concluir serviço
+              </button>
+            )}
+            {canCancel && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isProcessing}
+                className={`${showActions || canComplete ? '' : 'w-full'} px-3 py-1.5 rounded-md border border-danger-300 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs font-medium transition-colors text-center`}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -145,10 +224,55 @@ export function ServiceCard({ service, layout = 'list', className = '' }) {
         </div>
       </div>
 
-      <div className="flex items-center self-start sm:self-center shrink-0 border-t border-gray-100 pt-2.5 sm:border-t-0 sm:pt-0 w-full sm:w-auto">
+      <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 self-stretch sm:self-center shrink-0 border-t border-gray-100 pt-3 sm:border-t-0 sm:pt-0">
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${status.style}`}>
           {status.label}
         </span>
+
+        {(showActions || canComplete || canCancel) && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {showActions && onAccept && (
+              <button
+                type="button"
+                onClick={() => onAccept(service.id)}
+                disabled={isProcessing}
+                className="px-3.5 py-1.5 rounded-md bg-forest-600 text-white text-xs sm:text-sm font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors"
+              >
+                Aceitar
+              </button>
+            )}
+            {showActions && onReject && (
+              <button
+                type="button"
+                onClick={() => onReject(service.id)}
+                disabled={isProcessing}
+                className="px-3.5 py-1.5 rounded-md border border-danger-500 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs sm:text-sm font-medium transition-colors"
+              >
+                Rejeitar
+              </button>
+            )}
+            {canComplete && (
+              <button
+                type="button"
+                onClick={() => onComplete(service.id)}
+                disabled={isProcessing}
+                className="px-3.5 py-1.5 rounded-md bg-forest-600 text-white text-xs sm:text-sm font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors"
+              >
+                Concluir serviço
+              </button>
+            )}
+            {canCancel && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isProcessing}
+                className="px-3.5 py-1.5 rounded-md border border-danger-300 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs sm:text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

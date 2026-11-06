@@ -11,11 +11,13 @@ export const endpoints = {
     list: '/makerauth/scholarship-students/',
     register: '/makerauth/scholarship-students/',
     pending: '/makerauth/scholarship-students/pending/',
+    demoted: '/makerauth/scholarship-students/demoted/',
     accept: (id) => `/makerauth/scholarship-students/${id}/accept/`,
     reject: (id) => `/makerauth/scholarship-students/${id}/reject/`,
     promote: (id) => `/makerauth/scholarship-students/${id}/promote/`,
     removeManager: (id) => `/makerauth/scholarship-students/${id}/remove-manager/`,
     demoteToRequester: (id) => `/makerauth/scholarship-students/${id}/demote-to-requester/`,
+    repromote: (id) => `/makerauth/scholarship-students/${id}/repromote/`,
   },
   visits: {
     create: '/makerapp/visits/',
@@ -25,6 +27,8 @@ export const endpoints = {
     accept: (id) => `/makerapp/visits/${id}/accept/`,
     reject: (id) => `/makerapp/visits/${id}/reject/`,
     close: (id) => `/makerapp/visits/${id}/close/`,
+    delete: (id) => `/makerapp/visits/${id}/`,
+    cancel: (id) => `/makerapp/visits/${id}/`,
   },
   schools: {
     list: '/makerapp/schools/',
@@ -35,6 +39,12 @@ export const endpoints = {
   services: {
     create: '/makerapp/services/',
     mine: '/makerapp/services/mine/',
+    list: '/makerapp/services/',
+    accept: (id) => `/makerapp/services/${id}/accept/`,
+    reject: (id) => `/makerapp/services/${id}/reject/`,
+    complete: (id) => `/makerapp/services/${id}/complete/`,
+    delete: (id) => `/makerapp/services/${id}/`,
+    cancel: (id) => `/makerapp/services/${id}/`,
   },
   reports: {
     data: (params) => {
@@ -58,4 +68,4 @@ export const endpoints = {
     delete: (id) => `/makerapp/schedule-blocks/${id}/`,
     bulkDelete: '/makerapp/schedule-blocks/bulk-delete/',
   },
-};
+};

@@ -159,6 +159,7 @@ class ScholarshipStudentManagementTests(APITestCase):
         self.assertFalse(self.student.groups.filter(name="Managers").exists())
         self.assertTrue(self.student.groups.filter(name="Requesters").exists())
         self.assertEqual(self.student.groups.count(), 1)
+        self.assertTrue(self.student.is_demoted_scholarship_student)
 
     def test_manager_cannot_demote_bolsista_to_requester(self):
         self.client.force_authenticate(user=self.manager)
@@ -176,6 +177,77 @@ class ScholarshipStudentManagementTests(APITestCase):
 
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    # --- REPROMOTE BOLSISTA TESTS ---
+    def test_owner_can_repromote_demoted_bolsista(self):
+        # First demote student
+        UserService.remove_scholarship_student_to_requester(self.student)
+        self.student.refresh_from_db()
+        self.assertTrue(self.student.is_demoted_scholarship_student)
+        self.assertTrue(self.student.groups.filter(name="Requesters").exists())
+
+        self.client.force_authenticate(user=self.owner)
+        url = reverse('makerauth:scholarship-students-repromote', args=[self.student.id])
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.student.refresh_from_db()
+        self.assertTrue(self.student.groups.filter(name="Scholarship Students").exists())
+        self.assertFalse(self.student.groups.filter(name="Requesters").exists())
+        self.assertFalse(self.student.is_demoted_scholarship_student)
+        self.assertEqual(self.student.groups.count(), 1)
+
+    def test_owner_can_repromote_via_alias_url(self):
+        UserService.remove_scholarship_student_to_requester(self.student)
+        self.client.force_authenticate(user=self.owner)
+        url = reverse('makerauth:scholarship-students-repromote-to-scholarship-student', args=[self.student.id])
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.student.refresh_from_db()
+        self.assertTrue(self.student.groups.filter(name="Scholarship Students").exists())
+        self.assertFalse(self.student.groups.filter(name="Requesters").exists())
+
+    def test_manager_cannot_repromote_bolsista(self):
+        UserService.remove_scholarship_student_to_requester(self.student)
+
+        self.client.force_authenticate(user=self.manager)
+        url = reverse('makerauth:scholarship-students-repromote', args=[self.student.id])
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.student.refresh_from_db()
+        self.assertFalse(self.student.groups.filter(name="Scholarship Students").exists())
+
+    def test_anonymous_cannot_repromote_bolsista(self):
+        UserService.remove_scholarship_student_to_requester(self.student)
+        url = reverse('makerauth:scholarship-students-repromote', args=[self.student.id])
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_repromote_fails_if_already_scholarship_student(self):
+        self.client.force_authenticate(user=self.owner)
+        url = reverse('makerauth:scholarship-students-repromote', args=[self.student.id])
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+    def test_demoted_list_endpoint(self):
+        UserService.remove_scholarship_student_to_requester(self.student)
+
+        self.client.force_authenticate(user=self.owner)
+        url = reverse('makerauth:scholarship-students-demoted')
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['id'], self.student.id)
+        self.assertTrue(response.data[0]['is_demoted_scholarship_student'])
 
     # --- DIRECT SERVICE TESTS ---
     def test_user_service_methods(self):
@@ -196,6 +268,15 @@ class ScholarshipStudentManagementTests(APITestCase):
         self.assertFalse(self.student.groups.filter(name="Scholarship Students").exists())
         self.assertFalse(self.student.groups.filter(name="Managers").exists())
         self.assertTrue(self.student.groups.filter(name="Requesters").exists())
+        self.assertTrue(self.student.is_demoted_scholarship_student)
+        self.assertEqual(self.student.groups.count(), 1)
+
+        # 4. Repromote to scholarship student
+        UserService.repromote_to_scholarship_student(self.student)
+        self.student.refresh_from_db()
+        self.assertTrue(self.student.groups.filter(name="Scholarship Students").exists())
+        self.assertFalse(self.student.groups.filter(name="Requesters").exists())
+        self.assertFalse(self.student.is_demoted_scholarship_student)
         self.assertEqual(self.student.groups.count(), 1)
 
     # --- MANAGERS VIEWSET TESTS ---

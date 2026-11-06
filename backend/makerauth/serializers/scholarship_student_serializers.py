@@ -67,6 +67,7 @@ class ScholarshipStudentDetailSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'accepts_marketing_contact',
+            'is_demoted_scholarship_student',
             'groups'
         ]
 
@@ -83,5 +84,6 @@ class ScholarshipStudentListSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'accepts_marketing_contact',
+            'is_demoted_scholarship_student',
             'groups'
         ]

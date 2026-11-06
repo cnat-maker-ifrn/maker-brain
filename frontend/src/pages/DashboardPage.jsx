@@ -1,6 +1,8 @@
 import {
   useMyVisits,
   useMyServices,
+  visitService,
+  serviceService,
   VisitCard,
   ServiceCard,
   CreateVisitButton,
@@ -23,6 +25,24 @@ export default function DashboardPage() {
     error: servicesError,
     refetch: refetchServices,
   } = useMyServices();
+
+  const handleCancelVisit = async (id) => {
+    try {
+      await visitService.delete(id);
+      refetchVisits();
+    } catch (err) {
+      alert(err?.response?.data?.detail || 'Erro ao cancelar visita.');
+    }
+  };
+
+  const handleCancelService = async (id) => {
+    try {
+      await serviceService.delete(id);
+      refetchServices();
+    } catch (err) {
+      alert(err?.response?.data?.detail || 'Erro ao cancelar serviço.');
+    }
+  };
 
   return (
     <div className="space-y-8 sm:space-y-10">
@@ -47,7 +67,7 @@ export default function DashboardPage() {
         {!visitsLoading && visits.length > 0 && (
           <Carousel ariaLabel="Carrossel de agendamentos">
             {visits.map((visit) => (
-              <VisitCard key={visit.id} visit={visit} layout="carousel" />
+              <VisitCard key={visit.id} visit={visit} onCancel={handleCancelVisit} layout="carousel" />
             ))}
           </Carousel>
         )}
@@ -70,7 +90,7 @@ export default function DashboardPage() {
         {!servicesLoading && services.length > 0 && (
           <Carousel ariaLabel="Carrossel de serviços">
             {services.map((service) => (
-              <ServiceCard key={service.id} service={service} layout="carousel" />
+              <ServiceCard key={service.id} service={service} onCancel={handleCancelService} layout="carousel" />
             ))}
           </Carousel>
         )}

@@ -3,7 +3,7 @@ import { useVisitManagement, VisitCard, CloseVisitModal } from '@/features/maker
 import { Spinner } from '@/components/ui/Spinner';
 
 export default function VisitManagementPage() {
-  const { visits, isLoading, error, processingId, accept, reject, refetch } = useVisitManagement();
+  const { visits, isLoading, error, processingId, accept, reject, cancel, refetch } = useVisitManagement();
   const [closingVisit, setClosingVisit] = useState(null);
 
   return (
@@ -27,6 +27,7 @@ export default function VisitManagementPage() {
             onAccept={accept}
             onReject={reject}
             onCloseVisit={() => setClosingVisit(visit)}
+            onCancel={cancel}
             isProcessing={processingId === visit.id}
           />
         ))}

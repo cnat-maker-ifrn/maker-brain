@@ -1,6 +1,7 @@
 import re
 from rest_framework import serializers
 from makerauth.models import User
+from makerauth.services import UserService
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
@@ -68,4 +69,23 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class DeleteAccountSerializer(serializers.Serializer):
+    """
+    Validates the user's password before allowing account deletion
+    (soft-delete with data anonymization).
+    """
+
+    password = serializers.CharField(
+        write_only=True,
+        label="Senha",
+        help_text="Informe sua senha atual para confirmar a exclusão da conta.",
+    )
+
+    def validate_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Senha incorreta.")
+        return value
 

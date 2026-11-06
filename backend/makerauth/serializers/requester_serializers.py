@@ -75,6 +75,7 @@ class RequesterDetailSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'accepts_marketing_contact',
+            'is_demoted_scholarship_student',
             'groups'
         ]
 
@@ -90,6 +91,6 @@ class RequesterListSerializer(serializers.ModelSerializer):
             'bond',
             'enrollment',
             'accepts_marketing_contact',
+            'is_demoted_scholarship_student',
             'groups'
         ]
-

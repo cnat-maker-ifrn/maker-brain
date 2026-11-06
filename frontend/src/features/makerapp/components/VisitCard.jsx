@@ -44,12 +44,32 @@ function formatSchedulingDate(isoDate) {
   });
 }
 
-export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessing, layout = 'list', className = '' }) {
+export function VisitCard({
+  visit,
+  onAccept,
+  onReject,
+  onCloseVisit,
+  onCancel,
+  isProcessing,
+  layout = 'list',
+  className = '',
+}) {
   const { user } = useAuth();
   const isPrivilegedUser = Boolean(user?.groups?.some((g) => VISIT_MANAGER_GROUPS.includes(g)));
 
   const showActions = (onAccept || onReject) && visit.acceptance_status === 'pending';
   const canClose = Boolean(onCloseVisit && visit.acceptance_status === 'accepted' && !visit.is_visit_closed && isPrivilegedUser);
+  const canCancel = Boolean(
+    onCancel &&
+      (isPrivilegedUser || visit.acceptance_status === 'pending')
+  );
+
+  const handleCancel = () => {
+    if (window.confirm('Tem certeza de que deseja cancelar esta visita?')) {
+      onCancel(visit.id);
+    }
+  };
+
   const status = getVisitStatus(visit);
 
   // Detalhamento do card pós-fechamento (foto, descrição, observação e visitantes reais)
@@ -135,9 +155,9 @@ export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessin
           )}
         </div>
 
-        {showActions ? (
-          <div className="flex items-center gap-2 pt-3 mt-3 border-t border-gray-100">
-            {onAccept && (
+        {(showActions || canClose || canCancel) && (
+          <div className="flex items-center gap-2 pt-3 mt-3 border-t border-gray-100 flex-wrap">
+            {showActions && onAccept && (
               <button
                 onClick={() => onAccept(visit.id)}
                 disabled={isProcessing}
@@ -146,7 +166,7 @@ export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessin
                 Aceitar
               </button>
             )}
-            {onReject && (
+            {showActions && onReject && (
               <button
                 onClick={() => onReject(visit.id)}
                 disabled={isProcessing}
@@ -155,19 +175,28 @@ export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessin
                 Rejeitar
               </button>
             )}
+            {canClose && (
+              <button
+                type="button"
+                onClick={() => onCloseVisit(visit)}
+                disabled={isProcessing}
+                className="flex-1 px-3 py-1.5 rounded-md bg-forest-600 text-white text-xs font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors text-center"
+              >
+                Fechar visita
+              </button>
+            )}
+            {canCancel && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isProcessing}
+                className={`${showActions || canClose ? '' : 'w-full'} px-3 py-1.5 rounded-md border border-danger-300 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs font-medium transition-colors text-center`}
+              >
+                Cancelar
+              </button>
+            )}
           </div>
-        ) : canClose ? (
-          <div className="flex items-center gap-2 pt-3 mt-3 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={() => onCloseVisit(visit)}
-              disabled={isProcessing}
-              className="w-full px-3 py-1.5 rounded-md bg-forest-600 text-white text-xs font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors text-center"
-            >
-              Fechar visita
-            </button>
-          </div>
-        ) : null}
+        )}
       </div>
     );
   }
@@ -248,9 +277,9 @@ export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessin
           {status.label}
         </span>
 
-        {showActions ? (
-          <div className="flex items-center gap-2">
-            {onAccept ? (
+        {(showActions || canClose || canCancel) && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {showActions && onAccept && (
               <button
                 onClick={() => onAccept(visit.id)}
                 disabled={isProcessing}
@@ -258,8 +287,8 @@ export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessin
               >
                 Aceitar
               </button>
-            ) : null}
-            {onReject ? (
+            )}
+            {showActions && onReject && (
               <button
                 onClick={() => onReject(visit.id)}
                 disabled={isProcessing}
@@ -267,20 +296,29 @@ export function VisitCard({ visit, onAccept, onReject, onCloseVisit, isProcessin
               >
                 Rejeitar
               </button>
-            ) : null}
+            )}
+            {canClose && (
+              <button
+                type="button"
+                onClick={() => onCloseVisit(visit)}
+                disabled={isProcessing}
+                className="px-3.5 py-1.5 rounded-md bg-forest-600 text-white text-xs sm:text-sm font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors"
+              >
+                Fechar visita
+              </button>
+            )}
+            {canCancel && (
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={isProcessing}
+                className="px-3.5 py-1.5 rounded-md border border-danger-300 text-danger-600 hover:bg-danger-50 disabled:opacity-50 text-xs sm:text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+            )}
           </div>
-        ) : canClose ? (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onCloseVisit(visit)}
-              disabled={isProcessing}
-              className="px-3.5 py-1.5 rounded-md bg-forest-600 text-white text-xs sm:text-sm font-medium hover:bg-forest-500 disabled:opacity-50 transition-colors"
-            >
-              Fechar visita
-            </button>
-          </div>
-        ) : null}
+        )}
       </div>
     </div>
   );

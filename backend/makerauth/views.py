@@ -23,7 +23,7 @@ from .services import UserService
 from makerauth.permissions import IsOwner, IsOwnerOrManager, IsSelfUpdate
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers.token_serializers import CustomTokenObtainPairSerializer
-from .serializers.user_serializers import UserProfileUpdateSerializer
+from .serializers.user_serializers import UserProfileUpdateSerializer, DeleteAccountSerializer
 
 
 class RequesterViewSet(ModelViewSet):
@@ -69,6 +69,8 @@ class ScholarshipStudentViewSet(ModelViewSet):
             return User.objects.filter(is_active=False)
         if self.action in ['remove_manager', 'demote_manager']:
             return User.objects.filter(groups__name__in=["Scholarship Students", "Managers"], is_active=True).distinct()
+        if self.action in ['repromote', 'repromote_to_scholarship_student']:
+            return User.objects.filter(is_active=True)
         
         return User.objects.filter(groups__name="Scholarship Students", is_active=True)
 
@@ -90,6 +92,9 @@ class ScholarshipStudentViewSet(ModelViewSet):
 
         if self.action in ['demote_to_requester', 'demote']:
             return RequesterDetailSerializer
+
+        if self.action in ['repromote', 'repromote_to_scholarship_student']:
+            return ScholarshipStudentDetailSerializer
 
         return ScholarshipStudentDetailSerializer
         
@@ -119,6 +124,12 @@ class ScholarshipStudentViewSet(ModelViewSet):
             groups__name__in=["Owners", "Managers", "Requesters", "Scholarship Students"]
         ).distinct()
 
+        serializer = ScholarshipStudentListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def demoted(self, request):
+        queryset = User.objects.filter(is_demoted_scholarship_student=True, is_active=True)
         serializer = ScholarshipStudentListSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -167,6 +178,23 @@ class ScholarshipStudentViewSet(ModelViewSet):
     @action(detail=True, methods=['post', 'delete'], url_path='demote')
     def demote(self, request, pk=None):
         return self.demote_to_requester(request, pk=pk)
+
+    @swagger_auto_schema(methods=['post'], request_body=no_body, responses={200: ScholarshipStudentDetailSerializer})
+    @action(detail=True, methods=['post'], url_path='repromote')
+    def repromote(self, request, pk=None):
+        user = self.get_object()
+        if user.groups.filter(name="Scholarship Students").exists():
+            return Response(
+                {"detail": "O usuário já pertence ao grupo Scholarship Students."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        UserService.repromote_to_scholarship_student(user)
+        return Response(ScholarshipStudentDetailSerializer(user).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(methods=['post'], request_body=no_body, responses={200: ScholarshipStudentDetailSerializer})
+    @action(detail=True, methods=['post'], url_path='repromote-to-scholarship-student')
+    def repromote_to_scholarship_student(self, request, pk=None):
+        return self.repromote(request, pk=pk)
     
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
@@ -189,6 +217,8 @@ class ScholarshipStudentViewSet(ModelViewSet):
             'demote_manager',
             'demote_to_requester',
             'demote',
+            'repromote',
+            'repromote_to_scholarship_student',
         ]:
             return [IsOwner()]
 
@@ -232,3 +262,26 @@ class CurrentUserView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(RequesterDetailSerializer(request.user).data)
+
+    @swagger_auto_schema(
+        operation_description=(
+            "Exclui a conta do usuário autenticado. O registro é mantido no banco de dados, "
+            "mas o usuário é desativado e todos os dados pessoais sensíveis são anonimizados. "
+            "É necessário informar a senha atual para confirmar a operação."
+        ),
+        request_body=DeleteAccountSerializer,
+        responses={
+            204: "Conta excluída com sucesso.",
+            400: "Senha incorreta ou dados inválidos.",
+        },
+    )
+    def delete(self, request):
+        serializer = DeleteAccountSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+
+        UserService.anonymize_user(request.user)
+
+        return Response(
+            {"detail": "Sua conta foi excluída com sucesso."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

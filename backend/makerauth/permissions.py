@@ -3,6 +3,7 @@ from rest_framework.permissions import BasePermission
 OWNER_GROUPS = {"Owners"}
 MANAGER_GROUPS = {"Owners", "Managers"}
 VISIT_MANAGER_GROUPS = {"Owners", "Managers", "Scholarship Students"}
+SERVICE_MANAGER_GROUPS = {"Owners", "Managers", "Scholarship Students"}
 
 class IsOwner(BasePermission):
     def has_permission(self, request, view):
@@ -20,7 +21,7 @@ class IsOwnerOrManager(BasePermission):
         
         user_groups = set(request.user.groups.values_list('name', flat=True))
 
-        return bool(user_groups & MANAGER_GROUPS)
+        return bool(user_groups & MANAGER_GROUPS) or getattr(request.user, 'is_superuser', False)
 
 class IsVisitManager(BasePermission):
     def has_permission(self, request, view):
@@ -29,7 +30,16 @@ class IsVisitManager(BasePermission):
 
         user_groups = set(request.user.groups.values_list('name', flat=True))
 
-        return bool(user_groups & VISIT_MANAGER_GROUPS)
+        return bool(user_groups & VISIT_MANAGER_GROUPS) or getattr(request.user, 'is_superuser', False)
+
+class IsServiceManager(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        user_groups = set(request.user.groups.values_list('name', flat=True))
+
+        return bool(user_groups & SERVICE_MANAGER_GROUPS) or getattr(request.user, 'is_superuser', False)
 
 class IsSelfUpdate(BasePermission):
     def has_object_permission(self, request, view, obj):

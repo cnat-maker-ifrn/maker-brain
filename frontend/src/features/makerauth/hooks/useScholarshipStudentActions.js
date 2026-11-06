@@ -77,5 +77,20 @@ export function useScholarshipStudentActions(onActionComplete) {
     }
   };
 
-  return { accept, reject, promote, removeManager, demoteToRequester, processingId, error, setError };
+  const repromote = async (id) => {
+    setProcessingId(id);
+    setError(null);
+    try {
+      await scholarshipStudentService.repromote(id);
+      onActionComplete?.();
+    } catch (err) {
+      const serverErr = extractServerErrors(err);
+      setError(serverErr);
+      throw err;
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  return { accept, reject, promote, removeManager, demoteToRequester, repromote, processingId, error, setError };
 }
