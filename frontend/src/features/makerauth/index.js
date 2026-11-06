@@ -10,6 +10,7 @@ export { PendingScholarshipStudentCard } from './components/PendingScholarshipSt
 export { ActiveScholarshipStudentCard } from './components/ActiveScholarshipStudentCard';
 export { DemotedScholarshipStudentCard } from './components/DemotedScholarshipStudentCard';
 export { EditProfileModal } from './components/EditProfileModal';
+export { DeleteAccountModal } from './components/DeleteAccountModal';
 
 // hooks
 export { useRegisterRequester } from './hooks/useRegisterRequester';

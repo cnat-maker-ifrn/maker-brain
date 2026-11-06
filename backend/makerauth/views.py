@@ -23,7 +23,7 @@ from .services import UserService
 from makerauth.permissions import IsOwner, IsOwnerOrManager, IsSelfUpdate
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers.token_serializers import CustomTokenObtainPairSerializer
-from .serializers.user_serializers import UserProfileUpdateSerializer
+from .serializers.user_serializers import UserProfileUpdateSerializer, DeleteAccountSerializer
 
 
 class RequesterViewSet(ModelViewSet):
@@ -262,3 +262,26 @@ class CurrentUserView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(RequesterDetailSerializer(request.user).data)
+
+    @swagger_auto_schema(
+        operation_description=(
+            "Exclui a conta do usuário autenticado. O registro é mantido no banco de dados, "
+            "mas o usuário é desativado e todos os dados pessoais sensíveis são anonimizados. "
+            "É necessário informar a senha atual para confirmar a operação."
+        ),
+        request_body=DeleteAccountSerializer,
+        responses={
+            204: "Conta excluída com sucesso.",
+            400: "Senha incorreta ou dados inválidos.",
+        },
+    )
+    def delete(self, request):
+        serializer = DeleteAccountSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+
+        UserService.anonymize_user(request.user)
+
+        return Response(
+            {"detail": "Sua conta foi excluída com sucesso."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

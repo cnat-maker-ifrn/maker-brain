@@ -37,5 +37,9 @@ export const authService = {
   updateProfile: async (payload) => {
     const { data } = await apiClient.patch(endpoints.auth.me, payload);
     return data;
-  }
+  },
+
+  deleteAccount: async (password) => {
+    await apiClient.delete(endpoints.auth.me, { data: { password } });
+  },
 };

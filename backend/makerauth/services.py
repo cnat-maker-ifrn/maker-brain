@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from makerauth.models import User
 
@@ -83,5 +84,33 @@ class UserService:
         user.is_demoted_scholarship_student = False
         user.is_active = True
         user.save()
+
+        return user
+
+    @staticmethod
+    def anonymize_user(user):
+        """
+        Soft-deletes a user by deactivating the account and anonymizing
+        all personally identifiable information (PII).
+
+        The record is kept in the database for referential integrity, but
+        all sensitive fields are replaced with anonymous placeholders so
+        the user can no longer be identified.
+
+        Uses queryset.update() to bypass model-level full_clean() validation,
+        which would reject the anonymized CPF placeholder.
+        """
+        anon_suffix = str(user.pk)
+
+        User.objects.filter(pk=user.pk).update(
+            is_active=False,
+            name=f"Usuário Anonimizado {anon_suffix}",
+            email=f"anonimizado_{anon_suffix}@deleted.invalid",
+            cpf=f"anon{anon_suffix:0>7}"[:11],
+            cellphone="00000000000",
+            enrollment=None,
+            accepts_marketing_contact=False,
+            password=make_password(None),  # set_unusable_password equivalent
+        )
 
         return user
