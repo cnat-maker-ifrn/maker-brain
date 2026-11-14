@@ -110,7 +110,7 @@ export function CreateVisitForm({ onCreated }) {
   if (isSuccess) {
     return (
       <div className="rounded-lg border border-forest-200 bg-forest-50 px-6 py-8 text-center">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-forest-600">Visita solicitada</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-forest-600">Visita solicitada</p>
         <h2 className="mt-2 text-xl font-semibold text-gray-900">Aguardando aprovação</h2>
         <p className="mt-2 text-sm text-gray-500">
           Você será avisado quando sua visita for aceita ou rejeitada.

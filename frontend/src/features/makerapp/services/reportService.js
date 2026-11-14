@@ -356,7 +356,7 @@ export const reportService = {
       doc.setTextColor(...mutedSlate);
       doc.setDrawColor(203, 213, 225);
       doc.line(14, 287, 196, 287);
-      doc.text(`CNAT Maker • Sistema MakerBrain • Página ${i} de ${pageCount}`, 105, 292, {
+      doc.text(`CNAT Maker • Página ${i} de ${pageCount}`, 105, 292, {
         align: 'center',
       });
     }

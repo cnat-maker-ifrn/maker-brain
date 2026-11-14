@@ -66,10 +66,10 @@ export function RequesterRegisterForm({ onRegistered }) {
   if (isSuccess) {
     return (
       <div className="rounded-lg border border-forest-200 bg-forest-50 px-6 py-8 text-center">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-forest-600">Cadastro concluído</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-forest-600">Cadastro concluído</p>
         <h2 className="mt-2 text-xl font-semibold text-gray-900">Conta criada com sucesso</h2>
         <p className="mt-2 text-sm text-gray-500">
-          Você já pode acessar o MakerBrain com seu e-mail e senha.
+          Você já pode acessar o CNAT Maker com seu e-mail e senha.
         </p>
       </div>
     );
@@ -84,7 +84,7 @@ export function RequesterRegisterForm({ onRegistered }) {
       ) : null}
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-wider text-forest-600/80">
           01 — Identificação
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -131,7 +131,7 @@ export function RequesterRegisterForm({ onRegistered }) {
       </fieldset>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-wider text-forest-600/80">
           02 — Vínculo institucional
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -173,7 +173,7 @@ export function RequesterRegisterForm({ onRegistered }) {
       </fieldset>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-wider text-forest-600/80">
           03 — Acesso
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">

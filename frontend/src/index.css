@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: "Montserrat", sans-serif;
   --font-montserrat: "Montserrat", sans-serif;
 
   --color-forest-50: #eaf7f0;
@@ -18,4 +19,8 @@
   --color-danger-100: #fbd5d2;
   --color-danger-500: #e53935;
   --color-danger-600: #c62828;
+}
+
+body {
+  font-family: var(--font-sans);
 }

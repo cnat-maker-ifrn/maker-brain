@@ -92,7 +92,7 @@ function EditProfileForm({ onClose, profile, onUpdated }) {
       <div className="relative my-auto w-full max-w-lg max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto rounded-xl border border-gray-200 bg-white p-4 sm:p-6 md:p-8 shadow-xl">
         <div className="mb-4 sm:mb-6 flex items-start justify-between">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-forest-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-forest-600">
               Meu Perfil
             </p>
             <h2 className="mt-1 text-lg sm:text-xl font-semibold text-gray-900">

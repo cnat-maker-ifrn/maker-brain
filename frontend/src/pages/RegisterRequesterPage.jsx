@@ -8,7 +8,7 @@ export function RegisterRequesterPage() {
   return (
     <AuthPageShell
       title="Solicite acesso ao laboratório"
-      description="Cadastre-se como solicitante para agendar visitas técnicas, infantis ou rápidas ao MakerLab. A aprovação depende do seu vínculo institucional."
+      description="Cadastre-se como solicitante para agendar visitas técnicas, infantis ou rápidas ao CNAT Maker. A aprovação depende do seu vínculo institucional."
       footer={
         <>
           É bolsista do CNAT Maker?{' '}

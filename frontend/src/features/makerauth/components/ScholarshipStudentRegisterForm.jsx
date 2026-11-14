@@ -75,7 +75,7 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
   if (isSuccess) {
     return (
       <div className="rounded-lg border border-forest-200 bg-forest-50 px-6 py-8 text-center">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-forest-600">
+        <p className="text-xs font-semibold uppercase tracking-wider text-forest-600">
           Cadastro enviado
         </p>
         <h2 className="mt-2 text-xl font-semibold text-gray-900">Aguardando aprovação</h2>
@@ -96,7 +96,7 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
       ) : null}
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-wider text-forest-600/80">
           01 — Identificação
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -143,8 +143,8 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
       </fieldset>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
-          02 — Vínculo com o MakerLab
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-wider text-forest-600/80">
+          02 — Vínculo com o CNAT Maker
         </legend>
         <Input
           id="enrollment"
@@ -172,7 +172,7 @@ export function ScholarshipStudentRegisterForm({ onRegistered }) {
       </fieldset>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="mb-1 font-mono text-xs uppercase tracking-[0.3em] text-forest-600/80">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-wider text-forest-600/80">
           03 — Acesso
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">

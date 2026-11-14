@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLogin } from '../hooks/useLogin';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -16,50 +18,29 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-forest-600">
-          E-mail
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-          className="bg-white border border-gray-200 rounded-md px-3.5 py-2.5
-                     text-base sm:text-sm text-gray-900 placeholder:text-gray-400
-                     focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500
-                     transition-colors"
-          placeholder="voce@ifrn.edu.br"
-        />
-        {errors?.email && <p className="text-xs text-danger-600">{errors.email}</p>}
-      </div>
+      <Input
+        id="email"
+        type="email"
+        label="E-mail"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        autoComplete="email"
+        placeholder="voce@ifrn.edu.br"
+        error={errors?.email}
+      />
 
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label htmlFor="password" className="text-xs font-mono uppercase tracking-wider text-forest-600">
-            Senha
-          </label>
-          <Link to="/forgot-password" className="text-xs text-gray-500 hover:text-forest-600 transition-colors">
-            Esqueceu a senha?
-          </Link>
-        </div>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          autoComplete="current-password"
-          className="bg-white border border-gray-200 rounded-md px-3.5 py-2.5
-                     text-base sm:text-sm text-gray-900 placeholder:text-gray-400
-                     focus:outline-none focus:ring-2 focus:ring-forest-500/40 focus:border-forest-500
-                     transition-colors"
-          placeholder="••••••••"
-        />
-        {errors?.password && <p className="text-xs text-danger-600">{errors.password}</p>}
-      </div>
+      <Input
+        id="password"
+        type="password"
+        label="Senha"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        autoComplete="current-password"
+        placeholder="••••••••"
+        error={errors?.password}
+      />
 
       {generalError && (
         <p role="alert" className="text-sm text-danger-600 border border-danger-100 bg-danger-50 rounded-md px-3 py-2">
@@ -67,19 +48,17 @@ export function LoginForm() {
         </p>
       )}
 
-      <button
+      <Button
         type="submit"
-        disabled={isLoading}
-        className="mt-1 min-h-[44px] bg-forest-600 hover:bg-forest-500 disabled:bg-forest-600/40
-                   disabled:cursor-not-allowed text-white font-semibold
-                   rounded-md py-2.5 transition-colors"
+        isLoading={isLoading}
+        className="mt-1 w-full min-h-[44px]"
       >
-        {isLoading ? 'Entrando...' : 'Entrar'}
-      </button>
+        Entrar
+      </Button>
 
       <p className="text-center text-sm text-gray-500">
         Não tem conta?{' '}
-        <Link to="/register" className="text-forest-600 hover:text-forest-500 transition-colors">
+        <Link to="/register" className="text-forest-600 hover:text-forest-500 transition-colors font-medium">
           Cadastre-se como visitante
         </Link>
       </p>

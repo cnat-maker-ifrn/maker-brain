@@ -8,7 +8,7 @@ export function RegisterScholarshipStudentPage() {
   return (
     <AuthPageShell
       title="Cadastro de bolsista"
-      description="Envie seus dados para se tornar bolsista do MakerLab. Sua conta ficará pendente até a aprovação de um responsável do laboratório."
+      description="Envie seus dados para se tornar bolsista do CNAT Maker. Sua conta ficará pendente até a aprovação de um responsável do laboratório."
       footer={
         <>
           Vai apenas agendar uma visita?{' '}
