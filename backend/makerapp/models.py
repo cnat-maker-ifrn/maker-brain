@@ -19,7 +19,7 @@ class School(models.Model):
         db_table = "schools"
 
     def __str__(self):
-        return f"{self.name} ({self.inep_code})"
+        return f"{self.name} ({self.city}/{self.state})"
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
@@ -147,4 +147,4 @@ class ScheduleBlock(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"ScheduleBlock from {self.start_datetime} to {self.end_datetime} ({self.reason})"
+        return f"ScheduleBlock from {self.start_datetime} to {self.end_datetime} ({self.reason})"
