@@ -3,7 +3,7 @@ import { LoginForm } from '@/features/makerauth';
 
 export function LoginPage() {
   return (
-    <AuthPageShell title="Entrar" description="Acesse o painel do laboratório CNAT">
+    <AuthPageShell title="Entrar" description="Acesse o sistema de agendamento do laboratório CNAT Maker!">
       <LoginForm />
     </AuthPageShell>
   );
