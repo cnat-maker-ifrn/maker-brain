@@ -91,7 +91,7 @@ export function RequesterRegisterForm({ onRegistered }) {
           <Input
             id="name"
             label="Nome completo"
-            placeholder="Ana Beatriz Souza"
+            placeholder="Seu Nome Completo"
             value={values.name}
             onChange={setField('name')}
             error={errors.name}
