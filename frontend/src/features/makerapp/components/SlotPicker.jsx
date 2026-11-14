@@ -135,17 +135,21 @@ export function SlotPicker({ visitType, value, onChange }) {
                 onClick={prevMonth}
                 disabled={isPrevDisabled}
                 aria-label="Mês anterior"
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-xs font-bold text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
               >
-                ◀
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
               <button
                 type="button"
                 onClick={nextMonth}
                 aria-label="Próximo mês"
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-xs font-bold text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
               >
-                ▶
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                </svg>
               </button>
             </div>
           </div>
